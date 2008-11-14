@@ -6,6 +6,7 @@ import os.path
 import sha
 import socket
 import time
+import copy
 
 import kibot.BaseModule
 import kibot.Stasher
@@ -543,9 +544,9 @@ class ircDB(kibot.BaseModule.BaseModule):
         channel.topic_time(ttime)
 
 class CurrentUser:
-    def __init__(self, nickmask, userid=None, channels=[]):
+    def __init__(self, nickmask, userid=None, channels=None):
         self.nickmask = nickmask
-        self.channels = channels
+        self.channels = channels or []
         self.userid = userid
 
     def add_channel(self, channel):
@@ -556,10 +557,10 @@ class CurrentUser:
         self.nickmask = after + self.nickmask[len(before):]
         
 class KnownUser:
-    def __init__(self, userid, perms=[], masks=[], password=None):
+    def __init__(self, userid, perms=None, masks=None, password=None):
         self.userid = userid
-        self.perms = perms
-        self.masks = masks
+        self.perms = perms or []
+        self.masks = masks or []
         if password:
             self.password = self.set_password(password)
         else:
@@ -572,6 +573,17 @@ class KnownUser:
         tmp.update(self.__dict__)
         tmp['cached_perms'] = None
         return tmp
+
+    def __setstate__(self, dict):
+        # copy the perms and masks arrays coming from pickle, to work
+        # around old ircDB's that have many references to the same
+        # array
+
+        for key in ("perms", "masks"):
+            if dict.has_key(key):
+                dict[key] = copy.deepcopy(dict[key])
+
+        self.__dict__ = dict
 
     def __repr__(self):
         r =     "KnownUser(userid=%s,\n" % repr(self.userid)
