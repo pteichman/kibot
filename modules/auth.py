@@ -349,7 +349,7 @@ class auth:
                 newperms = target_user.get_raw_perms()
         if not newperms: newperms = ['(none)']
         cmd.reply('%s now has: %s' % (target_userid, ' '.join(newperms)))
-        event = Event('int_give_perm', userid, None, args, None)
+        event = Event('int_give_perm', target_userid, None, args, None)
         self.bot.handle_event(self.bot.conn, event)
         
     def _take_special(self, special_user, perms):
