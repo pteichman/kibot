@@ -1,0 +1,23 @@
+KIBOT AUTHORS
+
+Kibot was written by Michael Stenner <mstenner@phy.duke.edu> primarily
+as an amusement.  Along the way, code was snagged from others and even
+contributed directly :)
+
+SNAGGED CODE:
+  irclib.py   (much of which I override/enhance in m_irclib.py)
+    Joel Rosdahl <joel@rosdahl.net>
+  pygoogle.py (renamed from google.py to avoid namespace collisions)
+    Mark Pilgrim (f8dy@diveintomark.org)
+  SOAP.py
+    Cayce Ullman    (cayce@actzero.com)
+    Brian Matthews  (blm@actzero.com)
+    Mark Pilgrim    (f8dy@diveintomark.org)
+  timeoutsocket.py
+    Timothy O'Malley <timo@alum.mit.edu>
+
+CONTRIBUTED CODE:
+  bugzilla.py, units.py
+    Konstantin (Icon) Riabitsev <icon@phy.duke.edu>
+  magic.py
+    Timothy Burt <burt_timothy@yahoo.com>

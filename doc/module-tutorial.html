@@ -1,0 +1,749 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>Tutorial: Writing a Kibot Module</title>
+    <LINK REL="StyleSheet" HREF="help.css" TYPE="text/css" MEDIA="screen">
+  </head>
+
+  <body>
+    <h1>Tutorial: Writing a Kibot Module</h1>
+
+	<p>
+	  One of the primary design goals of kibot is make modules easy to
+	  write.  The bot itself is really just a framework upon which to
+	  hang modules.  This document is a tutorial showing how to use
+	  the basic tools that are available.  It is not an exhaustive
+	  reference of all of the available tools.  There are (or will be)
+	  other documents for that, and this tutorial refers to them when
+	  possible.
+	</p>
+
+	<ul>
+	  <li><a href="#firstmod">Your first legal module</a></li>
+	  <li><a href="#commands">Defining commands</a></li>
+	  <li><a href="#permissions">Permissions</a></li>
+	  <li><a href="#documentation">Documentation</a></li>
+	  <li><a href="#logging">Logging</a></li>
+	  <li><a href="#server">Communicating directly with the server</a></li>
+	  <li><a href="#loading">Loading and unloading properly</a></li>
+	  <li><a href="#handlers">Setting handlers</a></li>
+	  <li><a href="#timers">Setting timers</a></li>
+	  <li><a href="#stashers">Storing data</a></li>
+	  <li><a href="#settings">Managing module settings</a></li>
+	  <li><a href="#structure">Kibot structure</a></li>
+	  <li><a href="#troubleshooting">Troubleshooting</a></li>
+	</ul>
+
+	<a name="firstmod"></a>
+	<h2>Your first legal module</h2>
+
+    <p>
+      A kibot module is a python class instance.  When asked to load a
+      module of name <code>FOO</code>, the bot will look (in the bot
+      module load path) for a python module named <code>FOO.py</code>
+      (or <code>FOO.pyc</code> or <code>FOO.pyo</code>).  If it finds
+      one, it will load that python module, and look for a class named
+      <code>FOO</code> within it.  An instance of that class will be
+      created, with one argument passed in, the bot object itself.
+      The simplest module conceivable, then, is this:
+    </p>
+
+<pre class=python>
+# in a file called FOO.py
+class FOO:
+    def __init__(self, bot):
+        self.bot = bot
+</pre>
+
+    <p>
+      You might want to derive your module from the class <a
+      href="kibot/kibot.BaseModule.html#BaseModule"><code>BaseModule</code></a>,
+      which provides (among other things) a basic
+      <code>__init__</code> which does this and a few other things for
+      you.  So you could also do:
+    </p>
+
+<pre class="python">
+# in a file called FOO.py
+import kibot.BaseModule
+class FOO(kibot.BaseModule.BaseModule):
+    pass
+</pre>
+
+	<p>
+	  Once you have your module written, place it in the bot's module
+	  path (the module path and other configuration values are dumped
+	  to the log on startup).  The standard place to put your own
+	  modules is in the <code>modules</code> subdirectory of the base
+	  directory.  Once you've placed the module in the module path,
+	  you can ask the bot to load your new module.  You do this by
+	  typing <q>botnick: load FOO</q> on a public channel or just
+	  <q>load FOO</q> via a private <code>/msg</code>.  Be sure to
+	  watch the log.  If there are any problems, the python tracebacks
+	  will be written there.
+	</p>
+
+	<a name="commands"></a>
+	<h2>Defining commands</h2>
+
+    <p>
+      So, you want your module to have some commands, eh?  A command
+      is simply an instance method.  These methods must take one
+      argument, an instance of <a
+      href="kibot/kibot.CommandHandler.html#Command"><code>Command</code></a>
+      Let's make your first command.
+    </p>
+
+<pre class="python">
+class FOO(kibot.BaseModule.BaseModule):
+    _hello_cperm = 1 # we'll discuss this shortly
+    def hello(self, cmd):
+        cmd.reply('hello')
+</pre>
+
+    <p>
+      This command will be called when anyone says hello to the bot,
+      either by typing <code>botnick: hello</code> in a channel or
+      msg-ing <code>hello</code> privately.  The command simply
+      responds by saying <code>hello</code> back to them via the same
+      mechanism.  If you prefer different reply behavior, there are <a
+      href="kibot/kibot.CommandHandler.html#IRCReply">other methods</a>
+      available.  There are a few other attributes of the <a
+      href="kibot/kibot.CommandHandler.html#Command"><code>Command</code></a>
+      object that you may find useful:
+    </p>
+
+<pre class="python">
+class FOO(kibot.BaseModule.BaseModule):
+    _hello_cperm = 1 # we'll discuss this shortly
+    def hello(self, cmd):
+        if cmd.channel: # will be None if command was /msg'ed
+            cmd.reply('hello %s and the denizens of %s' 
+                % (cmd.nick, cmd.channel))
+        else:
+            cmd.reply('hello %s' % cmd.nick)
+</pre>
+
+    <p>
+      There is also <code>cmd.cmd</code>, which is the command as
+      typed, which could be <code>hello</code> or
+      <code>FOO.hello</code> or almost anything else if an alias is
+      defined.  There is also <code>cmd.args</code>, which is the full
+      string that was typed after the command.  There is a convenience
+      method <code>.asplit()</code>, which returns a split (on
+      whitespace) list of the arguments.
+    </p>
+    
+<pre class="python">
+a = cmd.asplit()
+  # is equivalent to
+a = string.split(cmd.args)
+</pre>
+
+    <p>
+      There's also <code>cmd.shsplit()</code>, which does shell-style
+      splitting that respects quotes and backslashes.  Each of these
+      respects the <code>maxsplit</code> keyword.
+    </p>
+
+    <p>
+      Methods of your class that begin with an underscore are
+      considered private, and will not be listed in the help or be
+      callable even if you provide a <code>_cperm</code> attribute.
+      The one "exception" is <code>__call__</code>. See the google
+      module for an example of how to use <code>__call__</code>.  The
+      one problem with <code>__call__</code> is that the documentation
+      doesn't work as nicely.
+    </p>
+
+	<a name="permissions"></a>
+    <h2>Permissions</h2>
+
+    <p>
+      As you may have guessed, the <code>_hello_cperm</code> attribute
+      defines the command permission for this command.  If it is the
+      integer 1, than anyone can execute the command.  If it is 0,
+      None or not present, the command is completely forbidden.  If it
+      is a string, the corresponding user perm will be required.  It's
+      actually quite powerful, but I won't get into the details here.
+      There's another document that addresses it extensively.
+    </p>
+
+	<a name="documentation"></a>
+    <h2>Documentation</h2>
+
+    <p>
+      The bot grabs the documentation from the doc strings of both the
+      class and methods.  In each case the first line will be used as
+      the <q>short</q> version of the documentation, and further lines
+      will be printed only when you ask for help on that specific
+      object.  Example:
+    </p>
+
+<pre class="python">
+class FOO(kibot.BaseModule.BaseModule):
+    """a silly little example
+    This module doesn't do much but say hello"""
+
+    _hello_cperm = 1 # we'll discuss this shortly
+    def hello(self, cmd):
+        """respond with 'hello'
+        hello
+        this command is really pretty dumb :)"""
+        cmd.reply('hello')
+</pre>
+	
+	<p>
+	  The second line of function help is normally usage (not so obvious in
+	  this case).
+	</p>
+	
+	<a name="logging"></a>
+	<h2>Logging</h2>
+
+	<p>
+	  Kibot supports centrallized logging for the benefit of both the
+	  module author and the bot owner.  The bot owner can have
+	  multiple log destinations (usually files) each with its own log
+	  threshold.  The log threshold determines how much stuff gets
+	  written to it.  A low log threshold means that only very
+	  important information gets written, whereas a high threshold
+	  means that tons of information can be written.
+	</p>
+
+	<p>
+	  As a module auther, you must decide what to log, and at what log
+	  <i>level</i> to log it.  A higher log level corresponds to a less
+	  important log.  In case you hadn't guessed, a log message's level gets
+	  compared to a log destination's threshold to determine whether or not
+	  it should be written there.
+	</p>
+
+    <p>
+	  Here is a command that does nothing but record what is passed in to
+	  the log file with a level of 2.  Please use some sort of prefix for all
+	  logs.  A reasonable convention is to begin all log messages with the
+	  module name in caps.  Remember that all modules and core bot functions
+	  will be logging to the same place, so a log such as <q>bad argument</q>
+	  will not be very useful unless you provide some context.
+	</p>
+
+<pre class="python">
+class FOO(kibot.BaseModule.BaseModule):
+    _log_cperm = 1
+    def log(self, cmd):
+        """write a message to the log files
+        log &lt;message&gt;"""
+        self.bot.log(2, 'FOO.log: %s' % (cmd.args, ))
+</pre>
+
+	<p>
+	  Here are some rough guidelines about what level you should use for
+	  log messages.  Examples of when the bot itself uses these levels
+	  are provided.
+	</p>
+
+	<table cellspacing="0">
+	  <tr>
+		<th>Level</th><th>Description</th>
+	  </tr>
+	  <tr>
+		<td class="center">0</td>
+		<td>very important message, fatal error, something is broken</td>
+	  </tr>
+	  <tr>
+		<td class="center">1</td>
+		<td>major events (modules loaded/unloaded)</td>
+	  </tr>
+	  <tr>
+		<td class="center">2</td>
+		<td>important but normal events (handlers and timers are set/unset)</td>
+	  </tr>
+	  <tr>
+		<td class="center">3</td>
+		<td>the day-to-day stuff (commands, op-ing and inviting users)</td>
+	  </tr>
+	  <tr>
+		<td class="center">5</td>
+		<td>most of the instructions the bot is given (events, timers)</td>
+	  </tr>
+	  <tr>
+		<td class="center">7</td>
+		<td>handy information for writing modules (raw traffic to/from the server)</td>
+	  </tr>
+	  <tr>
+		<td class="center">9</td>
+		<td>stuff that's useful only when something is wrong (entry/exit of all commands)</td>
+	  </tr>
+	</table>
+	
+	<a name="server"></a>
+    <h2>Communicating directly with the server</h2>
+
+    <p>
+      If you want to do more complex interactions, you can use
+      attributes of the bot object.  For example, lets build a
+      <code>kick</code> command.
+    </p>
+
+<pre class="python">
+class FOO(kibot.BaseModule.BaseModule):
+    _kick_cperm = 1 # probably not a good idea
+    def kick(self, cmd):
+        """kick one or more users
+        kick [nicks]"""
+        for nick in cmd.asplit():
+            # bot.conn is the ServerConnection object
+            bot.conn.kick(nick)
+</pre>
+
+    <p>
+      Most standard irc commands are implemented in the connection
+      object.  If we want to do some simple checking first, we can
+      consult the bot's irc database, where it keeps track of users:
+    </p>
+
+<pre class="python">
+class FOO(kibot.BaseModule.BaseModule):
+    _kick_cperm = 1 # probably not a good idea
+    def kick(self, cmd):
+        """kick one or more users
+        kick [nicks]"""
+        if not cmd.channel:
+            cmd.reply('ask me on a channel')
+            return
+        
+        chan_obj = cmd.bot.ircdb.channels[cmd.channel]
+    
+        if not chan_obj.is_oper(cmd.bot.nick):
+            cmd.reply("I don't have ops on %s" % cmd.channel)
+            return
+
+        for nick in cmd.asplit():
+            if chan_obj.has_user(nick):
+                bot.conn.kick(nick)
+            else:
+                reply("there's no %s on %s" % (nick, cmd.channel))
+</pre>
+
+    <p>
+      You might be tempted to keep some of these handy objects around
+      by saving them as <code>self.chan_obj</code> or something.
+      <b>Do not do that!</b> The only safe object is the bot object
+      itself.  The reason is that almost any object can be reloaded
+      dynamically.  For example, the ircdb object might be reloaded,
+      and if your module has stored a reference locally, you'll have
+      the <b>old</b> version.  Always access them via
+      <code>self.bot</code> object.  You can make convenience
+      references for use within a single function call (as we did
+      above) but don't keep them around.
+    </p>
+
+	<a name="loading"></a>
+    <h2>Loading and unloading properly</h2>
+
+    <p>
+      You need to think about loading and unloading if you have
+      handlers, timers or stored data.  It's pretty easy.  Loading is
+      done in <code>__init__</code> (duh), and when your module is
+      un-loaded, the method <code>_unload(self)</code> will be called
+      (if it's defined).
+    </p>
+
+	<a name="handlers"></a>
+    <h2>Setting handlers</h2>
+
+    <p>
+      Handlers are functions that will be called upon irc "events",
+      which are typically lines received from the server.  Handlers
+      take two arguments: the connection object (which will usually be
+      the same as <code>bot.conn</code>) and an <a
+      href="kibot/kibot.m_irclib.html#Event"><code>Event</code></a> object.
+    </p>
+
+    <p>
+      Lets say you want to welcome anyone who joins a channel.  You might
+      write the following handler:
+    </p>
+
+<pre class="python">
+from kibot.irclib import nm_to_n
+class FOO(kibot.BaseModule.BaseModule):
+    def _on_join(self, c, e):
+        channel = e.target
+        nick = nm_to_n(e.source)
+        c.privmsg(channel, 'welcome to %s, %s' % (channel, nick))
+</pre>
+
+    <p>
+      You need to set the handler so that it gets called on "join"s.  You do
+      this by calling:
+    </p>
+
+<pre class="python">
+self.bot.set_handler('join', self._on_join, 5)
+</pre>
+
+    <p>
+      This sets <code>_on_join</code> to be called when 'join' events
+      occur.  This handler is given priority 5.  Lower values mean
+      handlers will be called sooner (if there are multiple handlers
+      for a given event).  You should not use a value lower than 0.
+      Negative values are for internal bot handlers, like keeping the
+      irc database updated.  This rule is not enforced, but you can
+      screw stuff up or (more likely) confuse yourself.
+    </p>
+
+    <p>
+      If a handler returns the string <q><code>NO MORE</q></code> or
+      raises the exception <code>StopHandlingEvent</code> (defined in
+      <a
+      href="kibot/kibot.m_irclib.html"><code>kibot.m_irclib</code></a>)
+      then no more handlers will be called for that event.  Make sure
+      you know what you're doing if you do this.  Normal commands
+      (like the ones we wrote above) are called from an internal
+      priority 20 handler, so it is possible to take action before a
+      command is received.
+    </p>
+
+    <p>
+      You can delete a handler with the command
+    </p>
+
+<pre class="python">
+self.bot.del_handler('join', self._on_join, 5)
+</pre>
+    
+    <p>
+      The priority is ignored, but accepted.  For convenience, the <a
+      href="kibot/kibot.BaseModule.html#BaseModule"><code>BaseModule</code></a>
+      class provides the functions:
+    </p>
+
+<pre class="python">
+def _set_handlers(self, priority=0, prefix="_on_"): ...
+def _del_handlers(self, priority=0, prefix="_on_"): ...
+</pre>
+
+    <p>
+      If you call these, they will set or remove handlers for all
+      functions with the prefix <q><code>_on_</code></q>.  You can
+      alternatively, provide a list of handlers by setting the class
+      attribute <code>_handlers</code>.  For example:
+    </p>
+    
+<pre class="python">
+_handlers = ['join']
+</pre>
+
+    <p>
+      Be sure to delete any set handlers in <code>_unload</code>.
+    </p>
+
+
+	<p>
+	  Few events are well documented.  This is mildly annoying, but frankly,
+	  there's an easier way to learn about events than reading about them.
+	  The best way to program handlers is to run a bot at a high log level
+	  (between 5 and 10) and generate the event.  For example, if you want
+	  to see how to deal with a DCC request, run your bot at log level 10
+	  and send a DCC CHAT request.  You should see this roll in:
+	</p>
+
+<div class="fakepre">
+FROM SERVER: :nick!~username@host.domain.com PRIVMSG botnick :DCC CHAT chat 3287712632 35715<br />
+EVENT: type: ctcp_dcc, source: nick!~username@host.domain.com, target: botnick, args: ['CHAT chat 3287712632 35715']<br />
+EVENT: type: ctcp, source: nick!~username@host.domain.com, target: botnick, args: ['DCC', 'CHAT chat 3287712632 35715']<br />
+</div>
+
+	<p>
+	  In this case, two events are generated: one generic
+	  <code>ctcp</code> event, and one specific <code>ctcp_dcc</code>
+	  event.  You can choose which you want to deal with depending on
+	  your task.  The advantage of this approach is that you can see
+	  exactly what the event looks like.  There is one attribute of
+	  the <a
+	  href="kibot/kibot.m_irclib.html#Event"><code>Event</code></a>
+	  class that is not printed in the logs.  There is a
+	  <code>raw</code> object which (in most cases) contains the raw
+	  line that generated the event.  That line is shown in the logs
+	  above on the <code>FROM SERVER:</code> line.  Some special
+	  bot-generated events, such as <code>command_not_found</code>,
+	  <code>permission_denied</code> and a few others include some
+	  other data structure in the <code>raw</code> attribute.
+	</p>
+
+	<a name="timers"></a>
+	<h2>Setting timers</h2>
+
+    <p>
+      Timers can be used to perform delayed or repeated actions.
+      Timers are by creating instances of the <a
+      href="kibot/kibot.m_irclib.html#Timer"><code>Timer</code></a>
+      class.
+    </p>
+
+<pre class="python">
+self.timer = Timer(seconds, func, args=(), kwargs={}, fromnow=1, repeat=None)
+</pre>
+
+    <p>
+      and registered with 
+    </p>
+
+<pre class="python">
+self.bot.set_timer(self.timer)
+</pre>
+
+    <p>
+      The function <code>func</code> will be called after
+      <code>seconds</code> seconds.  If <code>fromnow == 0</code>,
+      then <code>seconds</code> will be interpreted as a unix time.
+      The function will be passed args and <code>kwargs</code>.  If
+      <code>repeat</code> is a number, <code>func</code> will be
+      repeated at that interval (in seconds).
+    </p>
+
+    <p>
+      Repeating timers should return 0 or 1.  A return of 1 means that
+      the timer should continue to repeat.  If it returns 0, it will
+      be terminated.  Timers that are not repeated (or returned 0) do
+      not need to be removed, but they can be.  Repeating timers
+      should be removed on <code>_unload</code> just like handlers.
+      Timers can be removed by calling
+    </p>
+
+<pre class="python">
+self.bot.del_timer(self.timer)
+</pre>
+
+	<a name="stashers"></a>
+	<h2>Storing data</h2>
+
+    <p>
+      Data can be stored easily by using stashers.  A <a
+      href="kibot/kibot.Stasher.html"><code>Stasher</code></a> is a
+      python object that acts like a <code>dict</code>, but
+      transparently stores the data to disk.  You can interact with
+      them directly, but the easiest thing to do is to use some of the
+      convenience methods and attributes defined in <a
+      href="kibot/kibot.BaseModule.html#BaseModule"><code>kibot.BaseModule</code></a>.
+      Here is an example that demonstrates the use of stashers for
+      storing users' email addresses.
+    </p>
+
+<pre class="python">
+import kibot.BaseModule
+class addressbook(kibot.BaseModule.BaseModule):
+    _stash_format = 'repr'     # format for the file
+    _stash_attrs = ['email']   # which attributes to load/save
+    def __init__(self, bot):
+        self.bot = bot
+        self.email = {}
+        # if the attribute wasn't in the file, or the file didn't exist,
+        # then it won't do anthing.  Otherwise it will overwrite the
+        # default we just set.
+        self._unstash() # load attributes listed in _stash_attrs
+
+    def _unload(self):
+        self._stash()   # forces a save
+
+    _setemail_cperm = 1
+    def setemail(self, cmd):
+        nick, email = cmd.asplit(1)
+        self.email[nick] = email
+        # self._stash() # you may want to force a save here, too
+
+    _getemail_cperm = 1
+    def getemail(self, cmd):
+        try:
+            email = self.email[cmd.args]
+        except KeyError, e:
+            cmd.reply("I don't have an email address for %s" % cmd.args)
+        else:
+            cmd.reply(email)
+</pre>
+
+	<p>
+	  There are a number of noteworthy things going on here.  First,
+	  data will be stored in a file named
+	  <code>addressbook.repr</code> in the bot's data directory.  The
+	  name is automatically grabbed from the module name and format.
+	  There are three formats available: <code>repr</code>,
+	  <code>pickle</code>, and <code>shelve</code>.  They are named
+	  after their respective python tools.  Each has its own
+	  advantages and disadvantages.
+	</p>
+
+	<dl>
+	  <dt><code>repr</code></dt>
+	  <dd>
+		The <code>repr</code> format uses a text representation of the
+		data, which makes it very easy to view and edit by hand.  It
+		is relatively large and slow becuase all data must be
+		rewritten for each change.  It is also somewhat restrictive
+		about what types of data may be included.  Class instances may
+		not be storable, although an arbitrary nesting of
+		<code>dict</code>s, <code>list</code>s, strings, etc. are
+		fine.  This is recommended for small, simple data sets that you
+		may want to view/edit by hand.
+	  </dd>
+
+	  <dt><code>pickle</code></dt>
+	  <dd>
+		This format <code>pickle</code>s the entire structure and
+		writes it on each save.  It is the smallest format, and most
+		flexible about data types.  This is recommended for small complex
+		data types.
+	  </dd>
+
+	  <dt><code>shelve</code></dt>
+	  <dd>
+		This format uses a db to store the key/value pairs from the 
+		<code>dict</code>.  The values are <code>pickle</code>d first.
+		This can be bulky for small data sets, but can be efficient for
+		larger or more frequently accessed data sets because it need not
+		rewrite the whole data set for a single modification.  This
+		is recommended for large data sets.
+	  </dd>
+	</dl>
+
+	<p>
+	  Note that each attribute in <code>_stash_attrs</code> will be
+	  one key in the <a
+	  href="kibot/kibot.Stasher.html"><code>Stasher</code></a> object.
+	  Therefore, if your email list grows to thousands of people, you
+	  do not really gain the benefit that you'd like from
+	  <code>shelve</code>.  To do that, you should get a <a
+	  href="kibot/kibot.Stasher.html"><code>Stasher</code></a> object
+	  directly, and make each nick/email pair its own key/value pair
+	  in the <a
+	  href="kibot/kibot.Stasher.html"><code>Stasher</code></a>.  This is
+	  not discussed in this document, but an example can be found in
+	  <a
+	  href="kibot/kibot.ircDB.html#ircDB"><code>kibot.ircDB.ircDB</code></a>
+	  for the <code>self.known</code> attribute.
+	</p>
+
+	<a name="settings"></a>
+	<h2>Managing module settings</h2>
+
+	<p>
+	  You may need to be able to dynamically set module
+	  <q>settings</q>.  A setting is simply an attribute of the module
+	  that can be read and written via the commands <code>base.get</code>
+	  and <code>base.set</code>.  Here's an example:
+	</p>
+
+<pre class="python">
+import kibot.BaseModule
+from kibot.Settings import Setting
+class arithmetic(kibot.BaseModule.BaseModule):
+    _settings = [
+        Setting('base', 10, 'the base in which to return answers')
+        ]
+
+    _add_cperm = 1
+    def add(self, cmd):
+        nums = cmd.asplit()
+        sum = 0
+        for i in nums:
+            try: sum += int(i)
+            except: pass
+        cmd.reply(self._stringify(sum))
+
+    def _stringify(self, num):
+        nums = '0123456789abcdefghijklmnopqrstuvwxyz'
+        base = int(self.base)
+        st = ''
+        num = int(num)
+        while sum != 0:
+            num, rmd = num / base, num % base
+            st = nums[rmd] + st
+        return st
+</pre>
+
+	<p>
+	  You can now give commands to the bot to <code>set</code> and
+	  <code>get</code> the current base.  These commands must be given
+	  with the full path, as in <q><code>set arithmetic.base
+	  16</code></q>.
+    </p>
+
+    <p>
+	  As used above, the attribute <code>self.base</code> will always
+	  be set to a string.  If you want to do something more complex,
+	  you can provide other arguments to the constructor
+	  <code>Setting</code>.  See the <code>Settings</code> <a
+	  href="kibot/kibot.Settings.html">documentation</a> for more
+	  details.  In this case, you probably want the <code>conv_func</code>,
+	  which is passed the raw string as typed by the user, and returns
+	  the converted value.
+
+<pre class="python">
+class arithmetic(kibot.BaseModule.BaseModule):
+    _settings = [
+        Setting('base', 10, 'the base in which to return answers',
+                conv_func=int)
+        ]
+</pre>
+	</p>
+
+	<p>
+	  Settings are not automatically <q>stashed</q>, but they are treated
+	  like any other attributes.  Simply include the setting name in
+	  <code>_stash_attrs</code> to have them stashed.
+	</p>
+
+	<p>
+	  In the examples above, we have not overridden <code><a
+	  href="kibot/kibot.BaseModule.html">BaseModule</a></code>'s
+	  <code>__init__</code>.  If you do, you should probably do
+<pre class="python">
+    self._settings = init_settings(self, self._settings)
+</pre>
+	  within your <code>__init__</code>.  This is where the default
+	  values get set.
+	</p>
+
+	<a name="structure"></a>
+	<h2>Kibot structure</h2>
+
+	<p>
+	  If you need to do more complex things, you may need to know a
+	  little more about the structure of the bot and some of its
+	  common objects.  Here is a heirarchical view of objects you're
+	  likely to need and their public attributes.
+	  
+	  <ul>
+		<li>bot - instance of <a href="kibot/kibot.Bot.html#Bot">
+			kibot.Bot.Bot</a></li>
+		  <ul>
+			<li>ircdb - instance of <a href="kibot/kibot.ircDB.html#ircDB">
+				kibot.ircDB.ircDB</a></li>
+			<li>permdb - instance of <a href="kibot/kibot.permDB.html#permDB">
+				kibot.permDB.permDB</a></li>
+			<li>mod - instance of <a href="kibot/kibot.ModuleManager.html#ModuleManager">
+				kibot.ModuleManager.ModuleManager</a></li>
+			<li>conn - instance of <a href="kibot/kibot.m_irclib.html#ServerConnection">
+				kibot.m_irclib.ServerConnection</a></li>
+		  </ul>
+		</li>
+		
+		<li>cmd - instance of <a href="kibot/kibot.CommandHandler.html#Command">
+			kibot.CommandHandler.Command</a> passed to command functions</li>
+
+		<li>event - instance of <a href="kibot/kibot.m_irclib.html#Event">
+			kibot.m_irclib.Event</a> passed to handlers</li>
+	  </ul>
+	</p>
+
+	<a name="troubleshooting"></a>
+	<h2>Troubleshooting</h2>
+
+    <p>  
+	  If you're having trouble getting something to work, be sure to turn
+	  logging up to at least 5 so you can see all of the events.
+	</p>
+  </body>
+</html>

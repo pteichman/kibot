@@ -1,0 +1,95 @@
+User Perm string (userperm or uperm)
+
+  The simplest uperm is simply a perm name, as in:
+	'manager'
+
+  Optionally, a list of (comma-separated) channels channels can be
+  appended after the perm-name.
+	'invite:#foo,#bar,!#baz'
+  Usually, this means that the user has 'invite' perms on #foo and
+  #bar, but not #baz.  For most commands, the presence of a channel in
+  the channels list is unnecessary.  It is only necessary that the
+  relevant channel is not explicitly excluded.  For example, if
+  someone asks the bot to op her (requiring the "op" perm) on channel
+  #foo, then
+	'op', 'op:', 'op:#baz', and 'op:#foo'
+  are all sufficient, whereas
+	'op:!#foo'
+  is not.
+
+  In addition to the channel list, the uperm can contain an arbitrary
+  number of additional lists.  These (and the channel list, actually)
+  can be used by the command perm in a nearly arbitrary way.  Here's
+  an example of a very full uperm:
+	'op:#baz,!#foo:joe,jake:com,org,edu'
+
+Command Perm objects (cperm)
+
+  The simplest cperm is simply a perm name, as in 'manager'.  If
+  someone uses a command with a simple cperm privately (with /privmsg)
+  then they will succeed if they posess the perm in any form.
+  However, if they use the command on a channel, they must not have
+  that channel negated in their channel list.  For example, if a user
+  has,
+    'remind:!#foo'
+  then they will be able to ask for private reminders (or reminders on
+  other channels) but not reminders on #foo.
+
+  Optionally, a cperm can contain a logical statement in python.  A
+  number of parameters are available.  They are:
+
+	channel  - channel command was used on (or None)
+	nick     - nick of the requestor
+	userid   - userid of the requestor
+	sargs    - string version of the args, ex: 'jerry #foo'
+	args     - list version of the args, ex: ['jerry', '#foo']
+
+	uperm    - user perm (just the permname) being compared
+	channels - uperm channel list
+	misc     - list of lists (the other stuff)
+
+  This second block will not be present if the cperm does not include
+  a permname.  You might want to omit the permname in some special
+  cases.  For example, this cperm
+	':len(args) == 0 or args[0] == nick'
+  allows anyone to use the command with no args, or with their own
+  nick as the first arg.
+
+  Lets have some examples.  Those with * are made on channel #foo.
+  Otherwise, commands are made privately.
+
+	uperm              cperm                                          result
+	========================================================================
+	* 'op'             'op'                                                1
+	* 'op'             'op:channel in channels'                            0
+	* 'remind'         'remind:channel is None or channel in channels'     0
+	* 'remind:#foo'    'remind:channel is None or channel in channels'     1
+	  'remind'         'remind:channel is None or channel in channels'     1
+
+  These "condition" strings are evaled in controlled namespace, so you
+  can take full advantages of ==, (), and, or, etc.
+
+  Command perms can also be grouped in lists.  If the first element of
+  the list is 'and'/'or', then the results of each test are
+  effectively and-ed/or-ed together in s short-circuiting way.  The
+  'and' is actually optional, and therefore assumend.
+
+  Finally, these lists can actually be nested, so you could (in
+  principls) do this:
+	['op', ['or', 'load', 'unload']]
+
+  Finally (again), if a callable object is used as a cperm (either at
+  the top level or inside a list) it will be called with the following
+  arguments:
+
+	cmd, uperms, user, command_name
+
+    cmd          - a Command instance 
+    uperms       - list of user perms (dealing with the "implies" tree 
+                   is the responsiblity of the function)
+    user         - None or a KnownUser instance
+    command_name - full name of the command (which may be different from
+                   cmd.cmd (what was typed) due to aliases or path 
+                   searching)
+
+  The function should return 1 for success and 0 for failure.

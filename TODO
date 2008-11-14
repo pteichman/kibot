@@ -1,0 +1,70 @@
+BUGS
+    possible problems with signals and system calls
+    recognize doesn't op correctly if done privately (check the logs next time)
+    v_thunder reports: autoload doesn't work
+    UNICODE issues - google search on "profi"
+	double-op when the bot gets ops on a channel and someone there has
+       autoop but isn't yet op-ed
+    kibot: fakemodule.thing        module-finding is broken
+	more invite issues
+    google module breaks with  PyXML 0.8.1 (under python 2.2.2)
+    log doesn't check for existence of logdir
+    log doesn't strip control (color) characters
+    logdir isn't stashed
+
+TODO:
+
+
+  REWRITE MAGIC
+    permission_denied and command_not_found handlers should
+      do nothing and NOT return "NO MORE" for private messages
+    observe "ignore" on pubmsg/action
+    write magic.__doc__
+    make magic recognize actions (via ctcp)
+    make magic respond to ".*, %B\?$" as a question (note: the comma is
+        important to distinguish between talking TO the bot and ABOUT the
+        bot - "shall we kill mybot?" vs. "shall we kill, mybot?")
+    make magic.say take an optional "target" channel as first arg.  This
+        would probably work like invite or op.  (discuss first)
+    MAGIC: have .say (public) .tell (privmsg), .action (pubaction)
+    MAGIC: implement .export and .import (of magic data), preferably
+        in a human-readable and -editable format
+    make magic record unanswerable questions for later modification :)
+    for magic, something like %n, but that EXCLUDES %N and %b
+    think about filtering OTHER outgoing text... basically output filters
+
+  FOR 0.1.0
+    Tidy the syntax of: slashdot.notify, ...
+        
+  HIGH PRIORITY
+    write docs
+    clean code
+    improve module-reloading to have dependancies, etc.
+    make inter-module access easier
+    remove ircdb_file option
+    links to code documentation
+    make kibot respect ctcp version
+
+  MEDIUM PRIORITY
+    possibly add perms to some of these potentially annoying things, 
+        perhaps creating a new perm specifically for magic
+    add a clean/check nick function (to be used by set_nick, probably)
+    make profile and other commands smart - fall back to nick
+    change profile cperm to allow "profile self"
+      (these last two may be incompatible for security reasons, unless
+       profile handles perms internally or with a function cperm)
+    better use of "unknown" perms
+    DCC :)
+    write irclib2 (both to clean up the irclib/m_irclib split and also
+        to give a little back :) )
+
+  LOW PRIORITY
+    cleanup is not very tidy - socket removal, etc
+    build process is a bit ugly (and repetitious) - tidy it up
+    make stasher backup comparison more efficient
+    strip out timers/handlers on module_unload (turns out this is hard)
+    ACRO: add better db back in (changed format, harder to use?)
+
+MODULE IDEAS
+    friends (me)
+    service - or unix, or something that provides "service"

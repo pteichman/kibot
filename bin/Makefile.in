@@ -1,0 +1,173 @@
+SHELL = @SHELL@
+top_srcdir = @top_srcdir@
+srcdir = @top_srcdir@
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+
+bindir = @bindir@
+sbindir = @sbindir@
+libexecdir = @libexecdir@
+datadir = @datadir@
+sysconfdir = @sysconfdir@
+sharedstatedir = @sharedstatedir@
+localstatedir = @localstatedir@
+libdir = @libdir@
+infodir = @infodir@
+docdir = @docdir@
+includedir = @includedir@
+oldincludedir = @oldincludedir@
+mandir = @mandir@
+
+pkgdocdir = $(docdir)/@PACKAGE@-@VERSION@
+pkgdatadir = $(datadir)/@PACKAGE@
+pkglibdir = $(libdir)/@PACKAGE@
+pkgincludedir = $(includedir)/@PACKAGE@
+
+top_builddir = @top_builddir@
+PYTHON  = @PYTHON_BIN@
+PY_STD_LIB = @PY_STD_LIB@
+PY_PREFIX_LIB = @PY_PREFIX_LIB@
+PY_MODULE_DIR = @PY_MODULE_DIR@
+PACKAGE = @PACKAGE@
+VERSION = @VERSION@
+DATE    = @DATE@
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL_SCRIPT = @INSTALL_SCRIPT@
+
+PYCOMPILE = $(top_srcdir)/py-compile --python $(PYTHON)
+
+# begin core config
+THISDIR = bin
+SUBDIRS = 
+#MODULES = $(shell echo *.py)
+#MODULEDIR = $(libdir)/$(PYTHON)/site-packages/kibot
+BINFILES = kibot kibot-control
+CLEANFILES = $(BINFILES)
+DAILYFILES = Makefile.in kibot.in kibot-control.in
+DISTFILES = $(DAILYFILES)
+INSTALLDIRS = $(bindir)
+# end core config
+
+all: $(MODULES) $(BINFILES) $(OTHERALL)
+	for subdir in $(SUBDIRS) ; do \
+	  $(MAKE) -C $$subdir all ; \
+	done
+
+install: all installdirs
+	for module in $(MODULES) ; do \
+	  $(INSTALL_DATA) $$module $(DESTDIR)$(MODULEDIR)/$$module ; \
+	done
+	HERE=`pwd`; cd $(DESTDIR)$(MODULEDIR); $$HERE/$(PYCOMPILE) $(MODULES)
+	for binfile in $(BINFILES) ; do \
+	  $(INSTALL_SCRIPT) -m 755 $$binfile $(DESTDIR)$(bindir)/$$binfile ; \
+	done
+	for manfile in $(MANFILES) ; do \
+	  mannum=`echo $$manfile | sed -e 's/.*\.//'` ; \
+	  $(INSTALL_DATA) $$manfile $(DESTDIR)$(mandir)/man$$mannum/$$manfile ; \
+	done
+	for subdir in $(SUBDIRS) ; do \
+	  $(MAKE) -C $$subdir install ; \
+	done
+
+uninstall:
+	for module in $(MODULES) ; do \
+	  $(RM) $(MODULEDIR)/$$module* ; \
+	done
+	for binfile in $(BINFILES) ; do \
+	  $(RM) $(bindir)/$$binfile ; \
+	done
+	for subdir in $(SUBDIRS) ; do \
+	  $(MAKE) -C $$subdir uninstall ; \
+	done
+
+clean:
+	rm -rf *.pyc *.pyo $(CLEANFILES)
+	for subdir in $(SUBDIRS) ; do \
+	  $(MAKE) -C $$subdir clean ; \
+	done
+
+distclean: clean
+	$(RM) config.log
+	$(RM) config.cache
+	$(RM) Makefile
+	$(RM) config.status
+	$(RM) -rf .libs
+	$(RM) -f core
+	for subdir in $(SUBDIRS) ; do \
+	  $(MAKE) -C $$subdir distclean ; \
+	done
+
+mostlyclean:
+	$(MAKE) clean
+
+maintainer-clean:
+	$(MAKE) distclean
+	$(RM) configure
+
+dist:
+	olddir=`pwd`; \
+	distdir=$(PACKAGE)-$(VERSION); \
+	rm -rf .disttmp; \
+	mkdir .disttmp; \
+	mkdir .disttmp/$$distdir; \
+	$(MAKE) distfiles
+	distdir=$(PACKAGE)-$(VERSION); \
+	cd .disttmp; \
+	tar -cvz > ../$$distdir.tar.gz $$distdir; \
+	cd $$olddir
+	rm -rf .disttmp
+
+daily:
+	olddir=`pwd`; \
+	DATE=`date +%Y%m%d` ; \
+	distdir=$(PACKAGE)-$(VERSION).$$DATE ; \
+	rm -rf .disttmp; \
+	mkdir .disttmp; \
+	mkdir .disttmp/$$distdir; \
+	sed -e "s/^VERSION=.*/&.$$DATE/" configure > .disttmp/$$distdir/configure ; \
+	sed -e "s/^VERSION=.*/&.$$DATE/" configure.in > .disttmp/$$distdir/configure.in ; \
+	sed -e "s/^Version: .*/&.$$DATE/" $(SPECFILE) > .disttmp/$$distdir/$(SPECFILE) ; \
+	chmod +x .disttmp/$$distdir/configure ; \
+	$(MAKE) dailyfiles
+	DATE=`date +%Y%m%d` ; \
+	distdir=$(PACKAGE)-$(VERSION).$$DATE ; \
+	cd .disttmp; \
+	tar -cvz > ../$$distdir.tar.gz $$distdir; \
+	cd $$olddir
+	rm -rf .disttmp
+
+dailyfiles:
+	DATE=`date +%Y%m%d` ; \
+	distdir=$(PACKAGE)-$(VERSION).$$DATE ; \
+	mkdir $(top_srcdir)/.disttmp/$$distdir/$(THISDIR) ; \
+	cp -a $(DAILYFILES) $(top_srcdir)/.disttmp/$$distdir/$(THISDIR)/
+
+	for subdir in $(SUBDIRS) ; do \
+	  $(MAKE) -C $$subdir dailyfiles ; \
+	done
+
+distfiles:
+	distdir=$(PACKAGE)-$(VERSION); \
+	mkdir $(top_srcdir)/.disttmp/$$distdir/$(THISDIR) ; \
+	cp -a $(DISTFILES) $(top_srcdir)/.disttmp/$$distdir/$(THISDIR)/
+
+	for subdir in $(SUBDIRS) ; do \
+	  $(MAKE) -C $$subdir distfiles ; \
+	done
+
+installdirs:
+	for dir in $(INSTALLDIRS); do \
+	  $(top_srcdir)/mkinstalldirs $(DESTDIR)/$$dir ; \
+	done
+
+archive: dist
+
+
+.PHONY: todo
+todo:
+	@echo ---------------===========================================
+	@grep -n TODO\\\|FIXME `find . -type f` | grep -v grep
+	@echo ---------------===========================================
+.PHONY: all install install-strip uninstall clean distclean mostlyclean maintainer-clean info dvi dist distfiles check installcheck installdirs daily dailyfiles

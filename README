@@ -1,0 +1,98 @@
+This file describes how to get kibot up and running.  For help
+installing kibot, see the INSTALL file.  For help using kibot once it's
+running, see the man pages, documents in doc, and the "online" help.
+
+NORMAL INSTALLS
+
+If you've installed in a "normal" way, either via "make install" or a
+package (such as an rpm), then you should be able to just run "kibot"
+to get started.  However, an ircbot is not useful without connecting
+to an irc server, so you may want to specify one.  There are a few
+ways to go about that:
+
+ 1) specify a server with the -s option
+
+    kibot -s myserver.com
+
+ 2) specify a config file with the -C option.  Sample config files are
+    included in the doc directory.  The default config file is
+    kibot.conf.
+
+ 3) specify a base directory with the -b option.  Most
+    file/directories specified to kibot are considered relative to the
+    base directoy.  This includes the config file.  The default base
+    directory is '.'.
+
+NONSTANDARD INSTALLS
+
+If you run kibot from a nonstandard location, there are a few things
+you need to take care of:
+
+ *) make sure the executable can find the kibot package.  You can
+    probably do this by setting the environment variable "PYTHONPATH".
+    For example, to run kibot right out of the distribution directory
+    (unpacked tarball), you might do this:
+
+      export PYTHONPATH=.
+      bin/kibot
+ 
+ *) tell kibot where to find its modules.  You can either do this on
+    the command line with --load-path, or in the config file option
+    load_path (in the [modules] section).
+
+      bin/kibot --load-path=modules
+
+ *) tell kibot where to find any support python modules that may be
+    needed by the bot modules.  You can use the command line option
+    --py-path or the config file option py_path (in the [files]
+    section). 
+
+      bin/kibot --py-path=pymod
+
+Putting all this together, you can run kibot right out of the
+distribution directy by running:
+
+  export PYTHONPATH=.
+  bin/kibot --load-path=modules --py-path=pymod
+
+Further combining this with the stuff described above, and you can
+have a fully functional bot by doing this:
+
+  bin/kibot --load-path=modules --py-path=pymod -s myserver.com -c'#bottest'
+
+You'll probably find it easier to put this in kibot.conf:
+
+[irc]
+nick = testbot
+server = myserver.com
+channels = #bottest
+[files]
+py_path = pymod
+[modules]
+load_path = modules
+
+and then running
+
+  bin/kibot
+
+DIRECT CONNECTIONS
+
+In order to control many bot functions (such as loading and unloading
+modules), you need to have appropriate permissions.  Do this with the
+program "kibot-control".  By default, kibot listens on a unix socket.
+Connections to this socket are treated like normal irc dialogs
+(private /msg exchanges), except that commands are exempt from
+permissions checks.  So, when you first set up your bot on a channel, you
+probably want to join the channel (say, with nick "foo") and then do the
+following at a shell:
+
+  kibot-control DC_SOCKET    # by default, it uses DC_SOCKET in the basedir
+  meet foo with owner        # add you as userid foo and give yourself 
+                             # owner permissions
+
+TROUBLESHOOTING
+
+If you're having trouble, turn up the debugging level with the --debug option.
+Using --debug=10 will give you LOTS of information.  In particular, note that 
+the values of all options are printed when kibot starts up (this happens at
+debug level 5).

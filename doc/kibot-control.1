@@ -1,0 +1,197 @@
+.\" kibot-control - control a running kibot
+.TH "kibot-control" "1" "2003 Apr 6" "Michael Stenner" ""
+.SH "NAME"
+kibot-control \- control a running kibot
+.SH "SYNOPSIS"
+.B kibot-control
+[options]
+.SH "DESCRIPTION"
+.PP 
+.B kibot-control
+is used to control a running 
+.BR kibot .
+This is mostly useful when starting an 
+.B kibot
+for the first time.
+.PP
+.B Kibot
+requires that users have permissions to execute certain commands.  
+.
+In order to have such permissions, a human must first be
+.B known
+to the bot.
+.
+Unfortunately, in order to introduce someone to the the bot (via the
+.B meet
+command), you must have the appropriate permissions.
+.
+This little Catch-22 can be cleanly avoided using
+.BR kibot-control ,
+which allows you to give the bot commands effectively free of
+permissions checks.
+.PP
+.B kibot-control
+can also be useful in other situations, such as when you connect from
+a strange location and need to tell the bot to recognize you (although
+password authentication gets around this, too).
+.PP
+The primary mode of operation for 
+.B kibot-control
+is to find and connect to the bot's
+.B direct connection
+(DC), which automatically grants full control over the bot.
+.
+A direct connection acts very much like a private IRC chat with the
+bot, except that permissions checks are automatically passed.
+.
+.SH "OPTIONS"
+.B kibot-control
+takes all of the options that
+.B kibot
+does (although it ignores most of them) and a few more.
+.
+The reason
+.B kibot-control
+takes the same options as
+.B kibot 
+is so that you can call it in exactly the same way you started your bot
+in order to control that bot.
+.
+That is, if you started your bot with
+.PP
+.RS
+kibot -C /foo/bar --dc-addr sockdir/socket
+.RE
+.PP
+it might be hard to know where to find the socket file.  
+.
+It will be in the base dir, but the base dir might be set in the
+config file (/foo/bar) or it could be the directory from which
+.B kibot
+was called (the default base dir is ".").
+.
+If you call
+.B kibot-control
+in exactly the same way:
+.PP
+.RS
+kibot-control -C /foo/bar --dc-addr sockdir/socket
+.RE
+.PP
+from within the same directory, then
+.B kibot-control 
+will parse the config file and determine correctly where the socket
+it.
+.PP
+.TP
+.B \-h, \-\-help
+Print a summary of command line options to STDOUT and exit.
+.TP
+.B \-b VAL, \-\-base\-dir=VAL
+The base directory where most other files are written or searched for.
+.
+If other files are specified with relative paths, it will be interpreted
+as relative to the base dir.
+.
+[files, base_dir] default: . (present working directory)
+.TP
+.B \-C VAL, \-\-conf=VAL
+The location of the config file.
+Like other files, this is considered relative to the base directory if
+a relative path is give.
+.
+default: kibot.conf
+.B \-\-lockfile=VAL
+The file to use as a lockfile and to which the bot's pid is written.
+[admin, lockfile] default: kibot.pid
+.TP
+.B \-\-dc\-addr=VAL
+The direct connection (DC) address to connect to.
+.
+This can either be the address of a unix socket (basically, a file
+name), or it can be a host:port.
+.
+This is the one deviation from the
+.B kibot
+options.
+.
+This allows you run
+.B kibot-control 
+on a different machine from 
+.BR kibot .
+If the host part is omitted (that is, if only a port is provided),
+then the host is assumed to be localhost.
+[admin, dc_addr] default: DC_SOCKET
+.TP
+.B \-\-kill
+Get the PID from the lockfile and then kill the bot.
+.
+The bot is first sent SIGTERM, and if it does not terminate within 30
+seconds, it is sent SIGKILL.
+.TP
+.B \-\-reload
+Send the bot SIGHUP, which causes it to reload its config.
+.
+Note that it still uses the command line options that were passed in at
+startup, and they will still override config file options.
+.
+.TP
+.B \-\-pid
+Print the process id of the bot to STDOUT and exit.
+.TP
+.B \-\-signal=VAL
+Send the signal VAL to the bot.
+.
+VAL can be a number or name (as in SIGTERM or TERM).
+.
+Note that there's little reason to do this with 
+.B \-\-kill
+and
+.B \-\-reload
+available.
+.SH "EXAMPLES"
+The most obvious example is when you first create a new bot.
+.
+In that event, you should start the bot, (see 
+.BR kibot (1)
+) start
+.B kibot-control
+in the same fashion, and do the following:
+.PP
+.RS
+.nf
+join #SOMECHANNEL
+<in your IRC client, you also join #SOMECHANNEL>
+meet YOURNICK with owner
+.fi
+.RE
+.PP
+At that point, you should be recognized as the bot's owner and should
+be able to do anything else you need to do from IRC.
+.SH "SEE ALSO"
+.nf
+.I kibot (1)
+the online documentation; do "/msg botnick help" to get started
+the kibot "doc" directory, usually /usr/share/doc/kibot-VERSION/
+http://linux.duke.edu/projects/kibot/
+.fi
+
+.PP 
+.SH "AUTHORS"
+.nf 
+Michael Stenner <mstenner@phy.duke.edu>
+.fi 
+
+.PP 
+.SH "BUGS"
+Due to the way python deals with signals, there is some possibility
+that "bad things" could happen if
+.B kibot
+receives a signal while it's in the process of executing a system
+call (mostly IO).
+.PP
+For now, send bugs to <mstenner@phy.duke.edu>.
+.
+Documentation bugs and "this isn't clear"\-reports are quite welcome
+as well.
+.fi 

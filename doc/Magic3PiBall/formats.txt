@@ -1,0 +1,13 @@
+Escape sequence scheme:
+  lowercase -> random value
+  uppercase -> default or current value
+---------------------------------------
+#:  (at the beginning of a string) signals do not perform translation
+%B: the bot's nick
+%n: random nick from channel
+%N: nick of person addressing bot
+%i: random integer
+%d: random date
+%D: today's date
+%w: word from list of random words
+%H: the current host (ie, the one on which the bot runs)

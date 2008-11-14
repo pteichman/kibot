@@ -1,0 +1,58 @@
+body { background: #ccc; margin: 1%;}
+
+h1 { font-size: xx-large; border-bottom: 2px solid black; }
+h2 { font-size: x-large;  border-bottom: 1px solid black; margin-left: 1%; }
+h3 { font-size: large; margin-left: 2%; }
+h4 { font-size: normal; margin-left: 3%; }
+
+pre {
+	background: #eee;
+	padding: .4em;
+	font-weight: bold;
+}
+
+div.preborder {
+	width: 90%;
+	margin-left: 5%;
+}
+
+
+table {
+	border-collapse: collapse;
+	width: 90%;
+	margin-left: 5%;
+	border: 2px solid black;
+}
+table.details { margin-bottom: .3em; }
+
+th {
+	border: 2px solid black;
+	padding-left: .5em;
+	padding-right: .5em;
+	background: #bbf;
+	vertical-align: top;
+}	
+
+td {
+	border: 1px solid black;
+	padding-left: .5em;
+	padding-right: .5em;
+	background: white;
+	vertical-align: top;
+}
+
+td.mlname { width: 14%; }
+td.sfname { width: 14%; }
+td.mldesc { background: lavender; }
+td.sfdesc { background: lavender; }
+
+td.dfname { background: #bbf; width: 14%; }
+td.dfdesc {	background: #bbf; }
+td.dfcpvalue    { background: lavender; }
+td.dfusagevalue { background: lavender; }
+td.dfdoc        { background: lavender; }
+
+td.dsname { background: #fbb; width: 14%; }
+td.dsdesc {	background: #fbb; }
+td.dsdefvalue { background: #fdd; }
+td.dscpvalue    { background: #fdd; }

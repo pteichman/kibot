@@ -1,0 +1,43 @@
+0.0.12
+  * Separation of the 'op' perm into 'op' and 'autoop'.  'op' now ONLY
+    allows you to execute the 'op' command.  As you might have guessed,
+    'autoop' will cause you to be automatically op-ed when you join
+    a channel, etc.
+
+    Bot owners with a pre-0.0.12 install will see everyone suddenly
+    stop being op-ed.  All bot owners should do:
+      addgrant manager autoop
+    so that 'autoop' can be granted (by managers).  If you want to
+    continue the old behavior, you should also do
+      addimply op autoop
+    so that everyone with 'op' automatically has 'autoop'.
+
+  * The 'profile_change' event has been removed and replaced with
+    several more fine-grained events.  This should not affect normal
+    users, but it could conceivably affect custom modules that use the
+    'profile_change' event.
+
+0.0.9
+  * Minor changes to the way stashers and settings work.  Now, by default
+    when a stasher loads, it will not create attribues that were not in
+    the stasher.  Previously, it would fill in these values with None.  The
+    new way is actually much more convenient, but minor changes may need
+    to be made.  self._unstash and self._stash now take an option argument
+    that is the default to be used if an item isn't defined.  Using None
+    for this argument recreates the old behavior.
+
+0.0.8
+  * The structure of magic data (magic.pickle) has changed, and so data
+    created under version 0.0.7 can probably not be used in 0.0.8.
+    Sorry.
+
+0.0.3
+  * Handling of the ircdb file has changed.  If you want to keep your
+    list of Known Users, you'll need to convert to the new format with
+    the following commands:
+
+      cd data;   # your bot's data directory
+      python2 /usr/share/doc/mbot-0.0.3/ircdb-convert.py ircdb ircdb.pickle
+
+    If you've used different paths or filenames, you'll need to adjust
+    accordingly.

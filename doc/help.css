@@ -1,0 +1,74 @@
+body { 
+  background: #eee; 
+  margin: 1%; 
+}
+code {
+  #font-weight: bold;
+  font-size: 1em;
+}
+.center { 
+  text-align: center;
+}
+table { 
+  border-collapse: collapse;
+  padding: 0;
+  border: thin solid black;
+  margin-left: 4%;
+  margin-right: 4%;
+}
+th {
+  border: thin solid black;
+  text-align: left;
+  padding-left: .5em;
+  padding-right: .5em;
+  background: lavender;
+}
+td {
+  border: thin solid black;
+  text-align: left;
+  padding-left: .5em;
+  padding-right: .5em;
+}
+
+.fakepre { 
+  font-family: monospace;
+  border: thin solid black;
+  margin-left: 4%;
+  margin-right: 4%;
+  padding: .5em;
+  #background: #bbb;
+}
+pre.python { 
+  border: thin solid black;
+  margin-left: 4%;
+  margin-right: 4%;
+  padding: .5em;
+  background: #bbb;
+}
+p { 
+	margin-left: 3%;
+	margin-right: 3%;
+}
+dl { 
+	margin-left: 4%;
+	margin-right: 4%;
+}
+ul { 
+	margin-left: 1em;
+	margin-right: 1em;
+}
+
+h1 { 
+	margin-left: 1%; 
+	margin-right: 1%;
+	border-bottom: thick double black;
+}
+h2 {
+	margin-left: 2%; 
+	margin-right: 2%;
+	border-bottom: thin solid black;
+}
+h3 {
+	margin-left: 3%;
+	margin-right: 3%;
+}

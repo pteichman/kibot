@@ -1,0 +1,379 @@
+.\" kibot - a modular python-based irc bot
+.TH "kibot" "1" "2003 Apr 6" "Michael Stenner" ""
+.SH "NAME"
+kibot \- a modular python-based irc bot
+.SH "SYNOPSIS"
+.B kibot
+[options]
+.SH "DESCRIPTION"
+.PP 
+.B Kibot
+is a python-based IRC bot written to be cleanly and robustly modular,
+powerful and flexible.
+.
+It has a rich permissions framework, and writing modules/commands for
+it is ridiculously simple.
+.PP
+On startup, a
+.B kibot
+connects to an IRC server.
+.
+You can then interact with it via IRC.
+.
+The nature of that interaction is largely documented online 
+(do "/msg botnick help" to get started) but there is one important thing
+you must understand if you're using a
+.B kibot
+for the first time: many commands require some sort of permission, and 
+when you first start a bot, it will not know anyone.
+.
+You could introduce it to someone (with the 
+.B meet
+command) but because it doesn't know you, you don't have permission to
+do that.
+.
+The way around this problem is to use 
+.BR kibot-control (1),
+which allows you to effectively circumvent the permissions checks.
+.PP
+See the
+.B EXAMPLES
+section for how to get up and running quickly.
+.SH "OPTIONS"
+.B kibot
+takes several options.
+.
+Most options can be provided on the command line or in the config file.
+.
+The config file has several sections, and each section can have several
+options.  For each option below, its corresponding
+.B section
+and
+.B option
+names are provided at the end of the description in the format
+.RB [ section ,
+.BR option ].
+.PP
+In most cases the format for the option value is identical whether
+used on the command line or in the config file.
+.
+The one quirk is with 
+.B list
+values.  A
+.B list
+can be separated by whitespace and/or commas.
+.
+If you use whitepace to delimit a 
+.B list 
+on the command line, you just enclose it in quotes or escape the
+whitespace, etc.
+.
+.B list
+options can also include the special keyword 
+.B PREV
+which will be replaced by the previous value for the list.
+.
+This can be used to append items to the list rather than replace the
+list contents.
+.P
+See the
+.B EXAMPLES
+section for a sample config file.
+.PP
+.TP
+.B \-h, \-\-help
+Print a summary of command line options to STDOUT and exit.
+.TP
+.B \-b VAL, \-\-base\-dir=VAL
+The base directory where most other files are written or searched for.
+.
+If other files are specified with relative paths, it will be interpreted
+as relative to the base dir.
+.
+[files, base_dir] default: . (present working directory)
+.TP
+.B \-C VAL, \-\-conf=VAL
+The location of the config file.
+Like other files, this is considered relative to the base directory if
+a relative path is give.
+.
+default: kibot.conf
+.TP
+.B \-\-py\-path=VAL
+A list if directories to add to the python module search path.
+.
+Like other paths, relative paths are relative to the base dir.
+.
+These directories should be used for support python modules needed by
+.B kibot
+modules that are not in the standard python distribution.  [files, py_path]
+default: pymod,/usr/share/kibot/pymod
+.TP
+.B \-d VAL, \-\-debug=VAL
+Set the logging level.
+.
+This is actually a
+.B list
+option, but using multiple debug levels requires setting multiple log files.
+.
+Each log level must be an integer.  Useful values are from -1 to 10.
+.
+A log level greater than 5 is really only useful for debugging low-level
+bot functions.  A level of -1 should result in no output at all.
+.
+[admin, debug] default: 0
+.TP
+.B \-\-logfile=VAL
+This is also a 
+.B list
+option, but using multiple log files requires setting multiple debug levels.
+.
+A value of "-" means STDOUT.
+.
+[admin, logfile] default: \-
+.TP
+.B \-f, \-\-forget
+By default, a 
+.B kibot
+remembers certain values that can be changed dynamically after startup.
+.
+This option instructs the bot to ignore those values and use the values
+in the conf file and/or command line.
+.
+The currently remembered vales are: the list of loaded modules, the bot's
+nick, and the bot's channel list.
+.
+[admin, forget] default: 0
+.TP
+.B \-\-daemon
+This tells the bot to run as a daemon.
+.
+This causes the bot to disconnect from its controlling terminal.
+.
+Any logging directed to STDOUT or STDERR will be lost.
+.
+The bot also forgets its umask, so you may want to use the 
+.b \-\-umask option as well.
+.
+[admin, daemon] default: 0
+.TP
+.B \-\-lockfile=VAL
+The file to use as a lockfile and to which the bot's pid is written.
+.
+The lockfile helps prevent you from accidentally running a bot twice 
+with the same data files, which could lead to data corruption.
+.
+The bot will remove a stale lockfile if everything appears to be safe,
+so you should never need to manually remove one.
+[admin, lockfile] default: kibot.pid
+.TP
+.B \-\-dc\-addr=VAL
+The direct connection (DC) address to listen for connections on.
+.
+This is the mechanism used by
+.BR kibot\-control(1).
+.
+This can either be the address of a unix socket (basically, a file name),
+or it can be a port number.
+.
+If it is a port number, the bot will bind to an INET socket and listen.
+.
+.BR WARNING : 
+you are responsible for securing this connection.
+.
+Anyone who can bind to this socket will have full control of your bot.
+.
+If you use a unix socket (recommended) be sure that it has the proper
+ownership and permissions.  
+.
+If you use an INET socket, you should firewall it appropriately.
+[admin, dc_addr] default: DC_SOCKET
+.TP
+.B \-\-umask=VAL
+The octal umask adopted in daemon mode.
+[admin, umask] default: 0077
+.TP
+.B \-\-timeout=VAL
+The timeout (in seconds) used for sockets.
+.
+You may want to set this to something larger if you have a very 
+slow connection.
+[admin, timeout] default: 5
+.TP
+.B \-\-autoload=VAL
+The 
+.B list
+of modules to load on startup.
+.
+The modules base, auth and irc will always be loaded on startup.
+[modules, autoload] default: (empty)
+.TP
+.B \-\-load\-path=VAL
+The 
+.B list
+of directories to look for bot modules in.
+[modules, load_path] default: modules,/usr/share/kibot/modules
+.TP
+.B \-s VAL, \-\-server=VAL
+The irc server to which the bot should connect.  This is
+.BR required,
+although you can of course specify it on the command line or in the 
+config file.
+[irc, server] default: (none)
+.TP
+.B \-p VAL, \-\-port=VAL
+The port on the irc server to connect to.
+[irc, port] default: 6667
+.TP
+.B \-c VAL, \-\-channels=VAL
+The 
+.B list
+of channels join automatically on startup.
+.
+You can tell the bot to join other channels with the 
+.B join
+command.
+[irc, channels] default: (none)
+.TP
+.B \-n VAL, \-\-nick=VAL
+The irc nick to use.  This can be changed later with the
+.B nick
+command.
+[irc, nick] default: kibot
+.TP 
+.B \-\-password=VAL
+The password to use for logging in to the server.
+[irc, password] default: (none)
+.TP
+.B \-u VAL, \-\-username=VAL
+The username to use.
+.
+This is the first part of username@host.domain.com.
+[irc, username] default: (same as nick)
+.TP
+.B \-N VAL, \-\-ircname=VAL
+The descriptive name to use.
+.
+This is the equivalent of a human's full name.
+[irc, ircname] default: (same as nick)
+.PP
+Some options are available only in the config file:
+.PP
+.TP
+.B [files, override_file]
+The file for locally overriding default permissions for commands.
+.
+This feature is not fully implemented yet.
+default: override.conf
+.TP
+.B [files, data_dir]
+The directory where the bot will store its data.
+default: data
+.TP
+.B [files, ircdb_file]
+The file where the bot should store its user database.
+.
+Note that the extension affects the format of the database.
+.
+The available extensions are: pickle, repr, and shelve.
+.
+pickle is highly recommended.
+default: data/ircdb.pickle
+.TP
+.B [irc, reconnect_interval]
+The interval (in seconds) with which the bot should attempt to reconnect
+if it should be disconnected, either as the result of an error, or via
+the
+.B disconnect
+command.
+.
+Note that some irc servers "throttle" connections to limit reconnect rates.
+.
+If you choose a reconnect_interval too small, you may not be able to connect
+(or even harder to diagnose, reconnect) to such servers.
+default: 30
+.SH "EXAMPLES"
+The most minimal conceivable invocation of 
+.B kibot
+is this:
+.PP
+.RS
+kibot -s myserver.mydomain.com
+.RE
+.PP
+This will cause the bot to connect to the server.
+.
+Files will be created in the present working directory (because the
+default base dir is ".").
+.PP
+The recommended way to run a 
+.B kibot
+is to create a config file which includes both the server definition and
+the location of the base dir.  Here is an example config file:
+.PP
+.RS
+.nf
+[admin]
+debug   = 2 5
+logfile = - log5
+
+[files]
+base_dir = /var/kibot/
+
+[irc]
+nick = foobot
+server = localhost
+channels = #fooland
+.fi
+.RE
+.PP 
+You can then start the bot simply with
+.PP
+.RS
+kibot -C /your/conf/file
+.RE
+.PP
+Kibot comes with an init script
+.RB ( /etc/rc.d/init.d/kibot )
+that can be used for running bots system-wide.
+.
+This expects to find one or more conf files (ending in ".conf") in 
+.BR /etc/kibot/ .
+By default, the init script runs the bots as user "nobody", although
+this is configurable.
+.
+Read the comment at the top of the init script for details.
+.
+.SH "SEE ALSO"
+.nf
+.I kibot\-control (1)
+the online documentation; do "/msg botnick help" to get started
+the kibot "doc" directory, usually /usr/share/doc/kibot-VERSION/
+http://linux.duke.edu/projects/kibot/
+.fi
+
+.PP 
+.SH "AUTHORS"
+.nf 
+Kibot and many modules
+  Michael Stenner <mstenner@phy.duke.edu>
+
+units, bugzilla
+  Konstantin (Icon) Riabitsev <icon@phy.duke.edu>
+magic
+  Timothy Burt <burt_timothy@yahoo.com>
+.fi 
+
+.PP 
+.SH "BUGS"
+Due to the way python deals with signals, there is some possibility that
+"bad things" could happen if
+.B kibot
+receives a signal while it's in the process of executing a system call 
+(mostly IO).
+.PP
+For now, send bugs to <mstenner@phy.duke.edu>.
+.
+Documentation bugs and "this isn't clear"\-reports are quite welcome
+as well.
+.fi 
