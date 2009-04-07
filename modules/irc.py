@@ -143,7 +143,15 @@ class irc(kibot.BaseModule.BaseModule):
         elif not is_channel(cmd.args):
             cmd.reply("that's not a legal channel")
         else:
-            self.bot.conn.join(cmd.args)
+            args = cmd.asplit()
+            channel = args[0]
+            key = None
+            
+            if len(args) > 2:
+                cmd.reply("too many arguments")
+            elif len(args) == 2:
+                key = args[1]
+            self.bot.conn.join(channel, key)
 
     _nick_cperm = 'manager'
     def nick(self, cmd):
