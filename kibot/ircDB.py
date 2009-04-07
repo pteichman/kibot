@@ -6,6 +6,7 @@ import os.path
 import sha
 import socket
 import time
+import types
 import copy
 
 import kibot.BaseModule
@@ -351,7 +352,7 @@ class ircDB(kibot.BaseModule.BaseModule):
         nm = e.source
         nick = nm_to_n(nm)
         if nick == self.bot.nick: # bot is joining
-            self.ircdata['channels'][ch] = 1
+            self.ircdata['channels'][ch] = self.bot.conn.channel_keys.get(ch, 1)
             self.save()
             self.channels[ch] = Channel()
             c.who(ch)
@@ -518,7 +519,11 @@ class ircDB(kibot.BaseModule.BaseModule):
             self.bot.log(6, 'IRCDB: using config channels: %s' % \
                          ' '.join(channels))
         for chan in channels:
-            self.bot.conn.join(chan)
+            if type(self.ircdata['channels'][chan]) in types.StringTypes:
+                key = self.ircdata['channels'][chan]
+            else:
+                key = None
+            self.bot.conn.join(chan, key)
 
     def _on_int_new_mask(self, c, e):
         self.rescan_user(userid=e.source)
