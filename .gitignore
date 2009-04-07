@@ -1,8 +1,14 @@
 **/*.pyc
 Makefile
+autom4te.cache
 bin/Makefile
 bin/kibot
 bin/kibot-control
+config.log
+config.status
+configure
+doc/modulehelp.html
+kibot/Options.py
 modules/Makefile
 pymod/Makefile
 tools/Makefile
