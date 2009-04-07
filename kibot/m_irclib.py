@@ -271,6 +271,7 @@ class ServerConnection(irclib.ServerConnection):
         irclib.ServerConnection.__init__(self, irclibobj)
         self.fp = kibot.Flood.FloodProtector()
         self._set_handlers()
+        self.channel_keys = {}
 
     def connect(self, server, port, nickname, password=None, username=None,
                 ircname=None, log_in=1):
@@ -594,6 +595,7 @@ class ServerConnection(irclib.ServerConnection):
     #    self.send_raw("ISON " + string.join(nicks, " "))
 
     def join(self, channel, key=""):
+        self.channel_keys[channel] = key
         self._handle_event(Event('send_join', '', '', [channel, key],
                                  conn=self))
     def _on_send_join(self, c, e):
