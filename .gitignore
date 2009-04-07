@@ -1,6 +1,8 @@
 **/*.pyc
 Makefile
 bin/Makefile
+bin/kibot
+bin/kibot-control
 modules/Makefile
 pymod/Makefile
 tools/Makefile
