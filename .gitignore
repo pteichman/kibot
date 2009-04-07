@@ -1,0 +1,6 @@
+**/*.pyc
+Makefile
+bin/Makefile
+modules/Makefile
+pymod/Makefile
+tools/Makefile
