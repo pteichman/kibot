@@ -517,8 +517,6 @@ class ServerConnection(irclib.ServerConnection):
     def _on_send_ctcp_action(self, c, e):
         if not e.conn is self: return
         self.ctcp("ACTION", *e.args)
-    #def action(self, target, action):
-    #    self.ctcp("ACTION", target, action)
 
     def ctcp(self, ctcptype, target, parameter=""):
         ## it is possible thet ctcp and ctcp_reply run into the message
@@ -530,9 +528,6 @@ class ServerConnection(irclib.ServerConnection):
     def _on_send_ctcp(self, c, e):
         if not e.conn is self: return
         self.privmsg(e.args[1], "\001%s%s\001" % (e.args[0], e.args[2]))
-    #def ctcp(self, ctcptype, target, parameter=""):
-    #    ctcptype = string.upper(ctcptype)
-    #    self.privmsg(target, "\001%s%s\001" % (ctcptype, parameter and (" " + parameter) or ""))
 
     def ctcp_reply(self, target, parameter):
         ## it is possible thet ctcp and ctcp_reply run into the message
@@ -542,8 +537,6 @@ class ServerConnection(irclib.ServerConnection):
     def _on_send_ctcp_reply(self, c, e):
         if not e.conn is self: return
         self.notice(e.args[0], "\001%s\001" % e.args[1])
-    #def ctcp_reply(self, target, parameter):
-    #    self.notice(target, "\001%s\001" % parameter)
 
     def admin(self, server=""):
         self._handle_event(Event('send_admin', '', '', [server.strip()],
@@ -551,16 +544,12 @@ class ServerConnection(irclib.ServerConnection):
     def _on_send_admin(self, c, e):
         if not e.conn is self: return
         self.send_raw("ADMIN " + e.args[0])
-    #def admin(self, server=""):
-    #    self.send_raw(string.strip(string.join(["ADMIN", server])))
 
     def globops(self, text):
         self._handle_event(Event('send_globops', '', '', [text], conn=self))
     def _on_send_globops(self, c, e):
         if not e.conn is self: return
         self.send_raw("GLOBOPS :" + e.args[0])
-    #def globops(self, text):
-    #    self.send_raw("GLOBOPS :" + text)
 
     def info(self, server=""):
         self._handle_event(Event('send_info', '', '', [server.strip()],
@@ -568,8 +557,6 @@ class ServerConnection(irclib.ServerConnection):
     def _on_send_info(self, c, e):
         if not e.conn is self: return
         self.send_raw('INFO ' + e.args[0])
-    #def info(self, server=""):
-    #    self.send_raw(string.strip(string.join(["INFO", server])))
 
     def invite(self, nick, channel):
         self._handle_event(Event('send_invite', '', '', [nick, channel],
@@ -577,8 +564,6 @@ class ServerConnection(irclib.ServerConnection):
     def _on_send_invite(self, c, e):
         if not e.conn is self: return
         self.send_raw("INVITE %s %s" % tuple(e.args))
-    #def invite(self, nick, channel):
-    #    self.send_raw(string.strip(string.join(["INVITE", nick, channel])))
 
     def ison(self, nicks):
         """Send an ISON command.
@@ -588,11 +573,6 @@ class ServerConnection(irclib.ServerConnection):
     def _on_send_ison(self, c, e):
         if not e.conn is self: return
         self.send_raw("ISON " + ' '.join(e.args))
-    #def ison(self, nicks):
-    #    """Send an ISON command.
-    #        nicks is a list of nicks
-    #    """
-    #    self.send_raw("ISON " + string.join(nicks, " "))
 
     def join(self, channel, key=""):
         if key != "":
@@ -604,8 +584,6 @@ class ServerConnection(irclib.ServerConnection):
         channel = e.args[0]
         key = e.args[1] and (' ' + e.args[1])
         self.send_raw("JOIN %s%s" % (channel, key))
-    #def join(self, channel, key=""):
-    #    self.send_raw("JOIN %s%s" % (channel, (key and (" " + key))))
 
     def kick(self, channel, nick, comment=""):
         self._handle_event(Event('send_kick', '', '',
@@ -614,8 +592,6 @@ class ServerConnection(irclib.ServerConnection):
         if not e.conn is self: return
         comment = e.args[2] and (" :" + e.args[2])
         self.send_raw("KICK %s %s%s" % (e.args[0], e.args[1], comment))
-    #def kick(self, channel, nick, comment=""):
-    #    self.send_raw("KICK %s %s%s" % (channel, nick, (comment and (" :" + comment))))
 
     def links(self, remote_server="", server_mask=""):
         self._handle_event(Event('send_links', '', '',
@@ -626,14 +602,6 @@ class ServerConnection(irclib.ServerConnection):
         for i in e.args:
             if i: command = command + ' ' + i
         self.send_raw(command)
-    #def links(self, remote_server="", server_mask=""):
-    #    """Send a LINKS command."""
-    #    command = "LINKS"
-    #    if remote_server:
-    #        command = command + " " + remote_server
-    #    if server_mask:
-    #        command = command + " " + server_mask
-    #    self.send_raw(command)
 
     def list(self, channels=None, server=""):
         self._handle_event(Event('send_list', '', '', [channels, server],
@@ -646,14 +614,6 @@ class ServerConnection(irclib.ServerConnection):
         if e.args[1]:
             command = command + " " + e.args[1]
         self.send_raw(command)
-    #def list(self, channels=None, server=""):
-    #    """Send a LIST command."""
-    #    command = "LIST"
-    #    if channels:
-    #        command = command + " " + string.join(channels, ",")
-    #    if server:
-    #        command = command + " " + server
-    #    self.send_raw(command)
 
     def lusers(self, server=""):
         self._handle_event(Event('send_lusers', '', '', [server], conn=self))
@@ -661,8 +621,6 @@ class ServerConnection(irclib.ServerConnection):
         if not e.conn is self: return
         server = e.args[0] and (' ' + e.args[0])
         self.send_raw("LUSERS" + server)
-    #def lusers(self, server=""):
-    #    self.send_raw("LUSERS" + (server and (" " + server)))
 
     def mode(self, target, command):
         self._handle_event(Event('send_mode', '', '',
@@ -670,8 +628,6 @@ class ServerConnection(irclib.ServerConnection):
     def _on_send_mode(self, c, e):
         if not e.conn is self: return
         self.send_raw("MODE %s %s" % tuple(e.args))
-    #def mode(self, target, command):
-    #    self.send_raw("MODE %s %s" % (target, command))
 
     def motd(self, server=""):
         self._handle_event(Event('send_motd', '', '', [server], conn=self))
@@ -679,8 +635,6 @@ class ServerConnection(irclib.ServerConnection):
         if not e.conn is self: return
         server = e.args[0] and (' ' + e.args[0])
         self.send_raw('MOTD' + server)
-    #def motd(self, server=""):
-    #    self.send_raw("MOTD" + (server and (" " + server)))
 
     def names(self, channels=None):
         self._handle_event(Event('send_names', '', '', [channels], conn=self))
@@ -688,16 +642,12 @@ class ServerConnection(irclib.ServerConnection):
         if not e.conn is self: return
         c = e.args and (' ' + ','.join(channels)) or ''
         self.send_raw("NAMES" + c)
-    #def names(self, channels=None):
-    #    self.send_raw("NAMES" + (channels and (" " + string.join(channels, ",")) or ""))
 
     def nick(self, newnick):
         self._handle_event(Event('send_nick', '', '', [newnick], conn=self))
     def _on_send_nick(self, c, e):
         if not e.conn is self: return
         self.send_raw("NICK %s" % tuple(e.args))
-    #def nick(self, newnick):
-    #    self.send_raw("NICK " + newnick)
 
     def notice(self, target, text):
         lim = self._msg_limit - 100
@@ -709,9 +659,6 @@ class ServerConnection(irclib.ServerConnection):
     def _on_send_notice(self, c, e):
         if not e.conn is self: return
         self.send_raw("NOTICE %s :%s" % tuple(e.args))
-    #def notice(self, target, text):
-    #    # Should limit len(text) here!
-    #    self.send_raw("NOTICE %s :%s" % (target, text))
 
     def oper(self, nick, password):
         self._handle_event(Event('send_oper', '', '', [nick, password],
@@ -719,8 +666,6 @@ class ServerConnection(irclib.ServerConnection):
     def _on_send_oper(self, c, e):
         if not e.conn is self: return
         self.send_raw("OPER %s %s" % tuple(e.args))
-    #def oper(self, nick, password):
-    #    self.send_raw("OPER %s %s" % (nick, password))
 
     def part(self, channels):
         if type(channels) == types.StringType: c = [channels]
@@ -729,19 +674,12 @@ class ServerConnection(irclib.ServerConnection):
     def _on_send_part(self, c, e):
         self.send_raw('PART ' + ','.join(e.args))
         if not e.conn is self: return
-    #def part(self, channels):
-    #    if type(channels) == types.StringType:
-    #        self.send_raw("PART " + channels)
-    #    else:
-    #        self.send_raw("PART " + string.join(channels, ","))
 
     def pass_(self, password):
         self._handle_event(Event('send_pass', '', '', [password], conn=self))
     def _on_send_pass(self, c, e):
         if not e.conn is self: return
         self.send_raw("PASS %s" + e.args)
-    #def pass_(self, password):
-    #    self.send_raw("PASS " + password)
 
     def ping(self, target, target2=""):
         self._handle_event(Event('send_ping', '', '', [target, target2],
@@ -751,8 +689,6 @@ class ServerConnection(irclib.ServerConnection):
         t1 = e.args[0]
         t2 = e.args[1] and (' ' + e.args[1])
         self.send_raw("PING %s%s" % (t1, t2))
-    #def ping(self, target, target2=""):
-    #    self.send_raw("PING %s%s" % (target, target2 and (" " + target2)))
 
     def pong(self, target, target2=""):
         self._handle_event(Event('send_pong', '', '', [target, target2],
@@ -762,8 +698,6 @@ class ServerConnection(irclib.ServerConnection):
         t1 = e.args[0]
         t2 = e.args[1] and (' ' + e.args[1])
         self.send_raw("PONG %s%s" % (t1, t2))
-    #def pong(self, target, target2=""):
-    #    self.send_raw("PONG %s%s" % (target, target2 and (" " + target2)))
 
     def privmsg(self, target, text):
         lim = self._msg_limit - 100
@@ -775,9 +709,6 @@ class ServerConnection(irclib.ServerConnection):
     def _on_send_privmsg(self, c, e):
         if not e.conn is self: return
         self.send_raw("PRIVMSG %s :%s" % tuple(e.args))
-    #def privmsg(self, target, text):
-    #    # Should limit len(text) here!
-    #    self.send_raw("PRIVMSG %s :%s" % (target, text))
 
     def privmsg_many(self, targets, text):
         lim = self._msg_limit - 100
@@ -789,9 +720,6 @@ class ServerConnection(irclib.ServerConnection):
     def _on_send_privmsg_many(self, c, e):
         if not e.conn is self: return
         self.send_raw("PRIVMSG %s :%s" % (','.join(e.args[0]), e.args[1]))
-    #def privmsg_many(self, targets, text):
-    #    # Should limit len(text) here!
-    #    self.send_raw("PRIVMSG %s :%s" % (string.join(targets, ","), text))
 
     def quit(self, message=""):
         self._handle_event(Event('send_quit', '', '',
@@ -800,8 +728,6 @@ class ServerConnection(irclib.ServerConnection):
         if not e.conn is self: return
         message = e.args[0] and (' :' + e.args[0])
         self.send_raw("QUIT" + message)
-    #def quit(self, message=""):
-    #    self.send_raw("QUIT" + (message and (" :" + message)))
 
     def sconnect(self, target, port="", server=""):
         self._handle_event(Event('send_sconnect', '', '',
@@ -811,10 +737,6 @@ class ServerConnection(irclib.ServerConnection):
         port = e.args[1] and (' ' + e.args[1])
         server = e.args[2] and (' ' + e.args[2])
         self.send_raw("CONNECT %s%s%s" % (e.args[0], port, server))
-    #def sconnect(self, target, port="", server=""):
-    #    self.send_raw("CONNECT %s%s%s" % (target,
-    #                                      port and (" " + port),
-    #                                      server and (" " + server)))
 
     def squit(self, server, comment=""):
         self._handle_event(Event('send_squit', '', '',
@@ -823,8 +745,6 @@ class ServerConnection(irclib.ServerConnection):
         if not e.conn is self: return
         comment = cprefix(e.args[1], ' :')
         self.send_raw("SQUIT %s%s" % (e.args[0], comment))
-    #def squit(self, server, comment=""):
-    #    self.send_raw("SQUIT %s%s" % (server, comment and (" :" + comment)))
 
     def stats(self, statstype, server=""):
         self._handle_event(Event('send_stats', '', '',
@@ -833,8 +753,6 @@ class ServerConnection(irclib.ServerConnection):
         if not e.conn is self: return
         server = cprefix(e.args[1], ' ')
         self.send_raw("STATS %s%s" % (e.args[0], server))
-    #def stats(self, statstype, server=""):
-    #    self.send_raw("STATS %s%s" % (statstype, server and (" " + server)))
 
     def time(self, server=""):
         self._handle_event(Event('send_time', '', '', [server], conn=self))
@@ -842,8 +760,6 @@ class ServerConnection(irclib.ServerConnection):
         if not e.conn is self: return
         server = cprefix(e.args[0], ' ')
         self.send_raw("TIME" + server)
-    #def time(self, server=""):
-    #    self.send_raw("TIME" + (server and (" " + server)))
 
     def topic(self, channel, new_topic=''):
         self._handle_event(Event('send_topic', '', '', [channel, new_topic],
@@ -852,11 +768,6 @@ class ServerConnection(irclib.ServerConnection):
         if not e.conn is self: return
         new_topic = cprefix(e.args[1], ' :')
         self.send_raw("TOPIC %s%s" % (e.args[0], new_topic))
-    #def topic(self, channel, new_topic=None):
-    #    if new_topic == None:
-    #        self.send_raw("TOPIC " + channel)
-    #    else:
-    #        self.send_raw("TOPIC %s :%s" % (channel, new_topic))
 
     def trace(self, target=""):
         self._handle_event(Event('send_target', '', '', [target], conn=self))
@@ -864,8 +775,6 @@ class ServerConnection(irclib.ServerConnection):
         if not e.conn is self: return
         target = cprefix(e.args[0], ' ')
         self.send_raw("TRACE" + target)
-    #def trace(self, target=""):
-    #    self.send_raw("TRACE" + (target and (" " + target)))
 
     def user(self, username, localhost, server, ircname):
         self._handle_event(Event('send_user', '', '',
@@ -874,8 +783,6 @@ class ServerConnection(irclib.ServerConnection):
     def _on_send_user(self, c, e):
         if not e.conn is self: return
         self.send_raw("USER %s %s %s :%s" % tuple(e.args))
-    #def user(self, username, localhost, server, ircname):
-    #    self.send_raw("USER %s %s %s :%s" % (username, localhost, server, ircname))
 
     def userhost(self, nicks):
         self._handle_event(Event('send_userhost', '', '', list(nicks),
@@ -883,8 +790,6 @@ class ServerConnection(irclib.ServerConnection):
     def _on_send_userhost(self, c, e):
         if not e.conn is self: return
         self.send_raw("USERHOST " + ','.join(e.args))
-    #def userhost(self, nicks):
-    #    self.send_raw("USERHOST " + string.join(nicks, ","))
 
     def users(self, server=""):
         self._handle_event(Event('send_users', '', '', [server], conn=self))
@@ -892,8 +797,6 @@ class ServerConnection(irclib.ServerConnection):
         if not e.conn is self: return
         server = cprefix(e.args[0], ' ')
         self.send_raw("USERS" + server)
-    #def users(self, server=""):
-    #    self.send_raw("USERS" + (server and (" " + server)))
 
     def version(self, server=""):
         self._handle_event(Event('send_version', '', '', [server], conn=self))
@@ -901,16 +804,12 @@ class ServerConnection(irclib.ServerConnection):
         if not e.conn is self: return
         server = cprefix(e.args[0], ' ')
         self.send_raw("VERSION" + server)
-    #def version(self, server=""):
-    #    self.send_raw("VERSION" + (server and (" " + server)))
 
     def wallops(self, text):
         self._handle_event(Event('send_wallops', '', '', [text], conn=self))
     def _on_send_wallops(self, c, e):
         if not e.conn is self: return
         self.send_raw("WALLOPS :" + e.args[0])
-    #def wallops(self, text):
-    #    self.send_raw("WALLOPS :" + text)
 
     def who(self, target="", op=""):
         self._handle_event(Event('send_who', '', '', [target, op], conn=self))
@@ -919,16 +818,12 @@ class ServerConnection(irclib.ServerConnection):
         target = cprefix(e.args[0], ' ')
         op = e.args[1] and ' o' ##### SHOULD THIS BE "or"?
         self.send_raw("WHO%s%s" % (target, op))
-    #def who(self, target="", op=""):
-    #    self.send_raw("WHO%s%s" % (target and (" " + target), op and (" o")))
 
     def whois(self, targets):
         self._handle_event(Event('send_whois', '', '', targets, conn=self))
     def _on_send_whois(self, c, e):
         if not e.conn is self: return
         self.send_raw("WHOIS " + ','.join(e.args))
-    #def whois(self, targets):
-    #    self.send_raw("WHOIS " + string.join(targets, ","))
 
     def whowas(self, nick, max="", server=""):
         self._handle_event(Event('send_whowas', '', '', [nick, max, server],
@@ -938,10 +833,6 @@ class ServerConnection(irclib.ServerConnection):
         max = cprefix(e.args[1], ' ')
         server = cprefix(e.args[2], ' ')
         self.send_raw("WHOWAS %s%s%s" % (e.args[0], max, server))
-    #def whowas(self, nick, max="", server=""):
-    #    self.send_raw("WHOWAS %s%s%s" % (nick,
-    #                                     max and (" " + max),
-    #                                     server and (" " + server)))
 
 class Event(object):
     """Event instances are used to represent irc events, and are what
