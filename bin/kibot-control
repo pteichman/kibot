@@ -1,4 +1,4 @@
-#!@PYTHON_BIN@
+#!/usr/bin/env python
 import sys
 import os
 import os.path
@@ -9,7 +9,7 @@ import time
 
 import kibot.Options
 import kibot.OptionParser
-from kibot.Options import __date__, __version__, __author__
+from kibot.Options import __version__, __author__
 
 DEBUG=0
 def dblog(message):
@@ -70,7 +70,7 @@ def get_options(cmd_line):
 def dohelp():
     sys.stderr.write( \
 """kibot-control -- administrative control program for kibot
-   v%s (%s) %s
+   v%s %s
 
 Usage: kibot-control [options] [DC address]
   -h, --help                print this help message
@@ -82,7 +82,7 @@ Usage: kibot-control [options] [DC address]
   --reload                  ask the bot to reload its config
   --pid                     print the pid of the bot
   --signal=VAL              send signal VAL to the bot
-""" % (__version__, __date__, __author__) )
+""" % (__version__, __author__) )
     sys.exit()
 
 def main():

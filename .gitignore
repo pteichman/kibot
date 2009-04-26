@@ -1,6 +1,9 @@
 **/*.pyc
 Makefile
+Makefile.in
+aclocal.m4
 autom4te.cache
+depcomp
 bin/Makefile
 bin/kibot
 bin/kibot-control
@@ -8,7 +11,11 @@ config.log
 config.status
 configure
 doc/modulehelp.html
+install-sh
 kibot/Options.py
+kibot.pid
+missing
 modules/Makefile
+py-compile
 pymod/Makefile
 tools/Makefile

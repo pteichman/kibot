@@ -1,4 +1,4 @@
-#!@PYTHON_BIN@
+#!/usr/bin/env python
 import kibot.Bot
 
 bot = kibot.Bot.Bot()
