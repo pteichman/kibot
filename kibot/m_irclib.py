@@ -595,7 +595,8 @@ class ServerConnection(irclib.ServerConnection):
     #    self.send_raw("ISON " + string.join(nicks, " "))
 
     def join(self, channel, key=""):
-        self.channel_keys[channel] = key
+        if key != "":
+            self.channel_keys[channel] = key
         self._handle_event(Event('send_join', '', '', [channel, key],
                                  conn=self))
     def _on_send_join(self, c, e):

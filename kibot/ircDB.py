@@ -521,9 +521,9 @@ class ircDB(kibot.BaseModule.BaseModule):
         for chan in channels:
             if type(self.ircdata['channels'][chan]) in types.StringTypes:
                 key = self.ircdata['channels'][chan]
+                self.bot.conn.join(chan, key)
             else:
-                key = None
-            self.bot.conn.join(chan, key)
+                self.bot.conn.join(chan)
 
     def _on_int_new_mask(self, c, e):
         self.rescan_user(userid=e.source)
