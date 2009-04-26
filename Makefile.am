@@ -6,6 +6,8 @@ dist_bin_SCRIPTS = \
 	bin/kibot \
 	bin/kibot-control
 
+EXTRA_DIST += bin/kibot_devel.py
+
 nodist_pkgpython_PYTHON = \
 	kibot/Options.py
 

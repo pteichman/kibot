@@ -1,5 +1,15 @@
 #!/usr/bin/env python
-import kibot.Bot
 
+import os, sys
+
+# if we're running in a development environment, add the toplevel
+# directory to the python path
+try:
+    import kibot_devel
+    sys.path.insert(0, os.path.dirname(os.path.dirname(sys.argv[0])))
+except ImportError:
+    pass
+
+import kibot.Bot
 bot = kibot.Bot.Bot()
 
