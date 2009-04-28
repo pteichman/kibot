@@ -392,7 +392,12 @@ class ircDB(kibot.BaseModule.BaseModule):
 
         if nick == self.bot.nick and not self.bot.hostname:
             self.bot.hostname = host
-            self.bot.hostip   = socket.gethostbyname(host)
+            try:
+                self.bot.hostip   = socket.gethostbyname(host)
+            except socket.gaierror:
+                # some irc networks obscure hostnames in whois replies,
+                # and dns lookups on those names will fail (synirc.net)
+                pass
 
         self.channels[ch].add_user(nick)
         
