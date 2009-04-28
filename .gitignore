@@ -9,6 +9,7 @@ bin/kibot-control
 config.log
 config.status
 configure
+data
 depcomp
 doc/modulehelp.html
 install-sh
