@@ -89,7 +89,10 @@ class Bot:
                 sys.exit(1)
             if filename == '-': fo = sys.stdout
             else: fo = open(filename, 'a', 1)
-            loggers.append(kibot.logger.Logger(threshold=level, file_object=fo))
+            printtime = lambda : time.strftime('%Y-%m-%d %H:%M:%S ',
+                                               time.localtime(time.time()))
+            loggers.append(kibot.logger.Logger(threshold=level, file_object=fo,
+                                               preprefix=printtime))
         kibot.m_irclib.log = self.log = kibot.logger.LogContainer(loggers)
 
     def lock(self):
