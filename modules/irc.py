@@ -151,7 +151,11 @@ class irc(kibot.BaseModule.BaseModule):
                 cmd.reply("too many arguments")
             elif len(args) == 2:
                 key = args[1]
-            self.bot.conn.join(channel, key)
+
+            if key is not None:
+                self.bot.conn.join(channel, key)
+            else:
+                self.bot.conn.join(channel)
 
     _nick_cperm = 'manager'
     def nick(self, cmd):
