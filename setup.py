@@ -20,9 +20,9 @@ setup(
             "kibot-control = kibot.cmd_control:main"
         ],
         "kibot.modules" : [
-            "module = kibot.modules.auth:auth",
-            "module = kibot.modules.base:base",
-            "module = kibot.modules.irc:irc"
+            "auth = kibot.modules.auth",
+            "base = kibot.modules.base",
+            "irc = kibot.modules.irc"
         ]
     }
 )
