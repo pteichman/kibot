@@ -3,7 +3,7 @@ import sys
 import os
 import os.path
 
-from kibot.OptionParser import OptionParser, OptionError
+from OptionParser import OptionParser, OptionError
 
 DEBUG = 0
 DEF_BOTMOD_PATH = ['modules', '@EXPANDED_PKGDATADIR@/modules']

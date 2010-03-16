@@ -1,6 +1,6 @@
 import os.path
-import kibot.BaseModule
-from kibot.PermObjects import UPermCache
+import BaseModule
+from PermObjects import UPermCache
 class CommandNotFoundError(Exception): pass
 
 default_imply = {
@@ -12,7 +12,7 @@ default_grant = {
     'manager': ['op', 'kick', 'introduce', 'ignore']
     }
 
-class permDB(kibot.BaseModule.BaseModule):
+class permDB(BaseModule.BaseModule):
     def __init__(self, bot):
         self.bot = bot
         self._load()

@@ -6,12 +6,12 @@ import signal
 import telnetlib
 import time
 
-import kibot.Options
-import kibot.OptionParser
+import Options
+import OptionParser
 
-def main():
-    import kibot.Bot
-    bot = kibot.Bot.Bot()
+def kibot():
+    import Bot
+    bot = Bot.Bot()
 
 DEBUG=0
 def dblog(message):
@@ -40,8 +40,8 @@ class UNIXTelnet(telnetlib.Telnet):
 
 ###########################################################
 def get_options(cmd_line):
-    o = kibot.OptionParser.OptionParser()
-    o = kibot.Options.fill_options(o)
+    o = OptionParser.OptionParser()
+    o = Options.fill_options(o)
     o.add('bool',   'kill',   '', 'kill',   0)
     o.add('bool',   'reload', '', 'reload', 0)
     o.add('bool',   'pid',    '', 'pid',    0)
@@ -52,7 +52,7 @@ def get_options(cmd_line):
     config_file = os.path.join(tmp.files.base_dir, tmp.files.conf_file)
     file_ops = o.load_ConfigParser(config_file)
     final = o.overlay([defaults, file_ops, command_line])
-    kibot.Options.munge_options(final)
+    Options.munge_options(final)
 
     dc_addr = final.admin.dc_addr
     pidfile = final.admin.lockfile
@@ -89,7 +89,7 @@ Usage: kibot-control [options] [DC address]
 def kibot_control():
     try:
         op, dc_addr, pidfile = get_options(sys.argv[1:])
-    except kibot.OptionParser.OptionError, e:
+    except OptionParser.OptionError, e:
         sys.exit('error: %s' % str(e))
 
     command = []

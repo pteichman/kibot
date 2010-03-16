@@ -8,12 +8,12 @@ from copy import copy
 from ihooks import BasicModuleLoader
 Loader = BasicModuleLoader()
 
-import kibot.BaseModule
-from kibot.PermObjects import CPerm, translate_cperm
+import BaseModule
+from PermObjects import CPerm, translate_cperm
 
 class NoPerm: pass
 
-class ModuleManager(kibot.BaseModule.BaseModule):
+class ModuleManager(BaseModule.BaseModule):
     _list_split_re = re.compile(r'\s*[,\s]\s*')
     _tmp_key = 'ModuleManagerData'
     _stash_file = 'modules.repr'

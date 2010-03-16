@@ -6,19 +6,18 @@ import string
 import time
 import signal
 
-import kibot.timeoutsocket
+import timeoutsocket
 
-import kibot.logger
-import kibot.daemon
-import kibot.m_irclib
-from kibot.m_irclib import Timer
+import logger
+import daemon
+import m_irclib
 
-import kibot.Options
-import kibot.BaseModule
-import kibot.ircDB
-import kibot.permDB
-import kibot.CommandHandler
-import kibot.ModuleManager
+import Options
+import BaseModule
+import ircDB
+import permDB
+import CommandHandler
+import ModuleManager
 
 """
 handler priorities:
@@ -29,7 +28,7 @@ handler priorities:
 class Bot:
     def __init__(self):
         # options
-        self.op = kibot.Options.options(sys.argv[1:])
+        self.op = Options.options(sys.argv[1:])
         sys.path = self.op.files.py_path + sys.path
 
         self.lock() # this also daemonizes, if using --daemon
@@ -40,7 +39,7 @@ class Bot:
 
         self.log(5, 'Setting socket timeout to %s seconds' % \
                  self.op.admin.timeout)
-        kibot.timeoutsocket.setDefaultSocketTimeout(self.op.admin.timeout)
+        timeoutsocket.setDefaultSocketTimeout(self.op.admin.timeout)
 
         if not os.path.exists(self.op.files.data_dir):
             try: os.makedirs(self.op.files.data_dir)
@@ -53,7 +52,7 @@ class Bot:
         self.set_signal_handlers()
         
         try: self.connect()
-        except kibot.irclib.ServerConnectionError, msg:
+        except irclib.ServerConnectionError, msg:
             self.log(0, "FATAL: Couldn't connect to server: '%s:%i'" % \
                      (self.op.irc.server, self.op.irc.port))
             self.log(0, "       " + str(msg))
@@ -91,25 +90,25 @@ class Bot:
             else: fo = open(filename, 'a', 1)
             printtime = lambda : time.strftime('%Y-%m-%d %H:%M:%S ',
                                                time.localtime(time.time()))
-            loggers.append(kibot.logger.Logger(threshold=level, file_object=fo,
-                                               preprefix=printtime))
-        kibot.m_irclib.log = self.log = kibot.logger.LogContainer(loggers)
+            loggers.append(logger.Logger(threshold=level, file_object=fo,
+                                         preprefix=printtime))
+        m_irclib.log = self.log = logger.LogContainer(loggers)
 
     def lock(self):
         # set self._true_lockfile because it may be possible in later
         # versions to re-scan the config file while running.
         lf = self._true_lockfile = self.op.admin.lockfile
-        kibot.daemon.cleanup_old_lockfile(lf)
+        daemon.cleanup_old_lockfile(lf)
         # check and get the lockfile BEFORE we daemonize, so we can write
         # to STDERR if we need to
         try:
-            lockfd = kibot.daemon.lock_fd(lf)
+            lockfd = daemon.lock_fd(lf)
         except OSError, e:
             sys.exit('FATAL: cannot create lockfile: %s' % str(e))
         if lockfd is None:
             sys.exit('FATAL: lockfile exists: %s' % lf)
         if self.op.admin.daemon:
-            kibot.daemon.daemonize('/dev/null', '/tmp/kibot', '/tmp/kibot')
+            daemon.daemonize('/dev/null', '/tmp/kibot', '/tmp/kibot')
             os.umask(self.op.admin.umask)
         # now write to it with our NEW pid
         os.write(lockfd, str(os.getpid()))
@@ -117,12 +116,12 @@ class Bot:
 
     def setup_connections(self):
         # server connection
-        self.ircobj = kibot.m_irclib.IRC()
+        self.ircobj = m_irclib.IRC()
         self.conn = self.ircobj.server()
 
         # direct connections
         addr = self.op.admin.dc_addr
-        self.dcm = kibot.m_irclib.DirectConnectionMaster(self.ircobj, addr)
+        self.dcm = m_irclib.DirectConnectionMaster(self.ircobj, addr)
         self.dcm.connect()
 
     def load_core_modules(self):
@@ -130,10 +129,10 @@ class Bot:
         self.tmp = {}
 
         # modules
-        self.ircdb           = kibot.ircDB.ircDB(self)
-        self.permdb          = kibot.permDB.permDB(self)
-        self.command_handler = kibot.CommandHandler.CommandHandler(self)
-        self.mod             = kibot.ModuleManager.ModuleManager(self)
+        self.ircdb           = ircDB.ircDB(self)
+        self.permdb          = permDB.permDB(self)
+        self.command_handler = CommandHandler.CommandHandler(self)
+        self.mod             = ModuleManager.ModuleManager(self)
 
     def unlock(self):
         os.unlink(self._true_lockfile)
@@ -179,7 +178,7 @@ class Bot:
         if 'all' in modules:
             modules = list(self.core_modules)
             modules.remove('all')
-        reload(kibot.BaseModule)
+        reload(BaseModule)
         for name in modules:
             if name not in self.core_modules:
                 self.log(1, "RELOAD IGNORING: %s" % name)
@@ -204,7 +203,7 @@ class Bot:
     def reload_config(self):
         for d in self.op.files.py_path:
             if sys.path[0] == d: sys.path.pop(0)
-        self.op = kibot.Options.options(sys.argv[1:])
+        self.op = Options.options(sys.argv[1:])
         sys.path = self.op.files.py_path + sys.path
 
         # close all of the old log files (unless they're <stderr>, etc)
@@ -221,8 +220,8 @@ class Bot:
                 continue
             if filename == '-': fo = sys.stdout
             else: fo = open(filename, 'a', 1)
-            loggers.append(kibot.logger.Logger(threshold=level, file_object=fo))
-        kibot.m_irclib.log = self.log = kibot.logger.LogContainer(loggers)
+            loggers.append(logger.Logger(threshold=level, file_object=fo))
+        m_irclib.log = self.log = logger.LogContainer(loggers)
         
         self.log(1, 'Reloaded config at: %s' % (time.asctime(), ))
         self.log.write(5, 'CONFIG:\n%s' % self.op)
@@ -241,10 +240,10 @@ class Bot:
                                     'something strange, look it up')
         message = "exiting on signal %i (%s)" \
                   % (signal_number, sigdesc)
-        self.set_timer(Timer(0, self.die_gracefully, args=(message, )))
+        self.set_timer(m_irclib.Timer(0, self.die_gracefully, args=(message, )))
 
     def _sighup_handler(self, signal_number, frame):
-        self.set_timer(Timer(0, self.reload_config))
+        self.set_timer(m_irclib.Timer(0, self.reload_config))
         
 if __name__ == '__main__':
     bot = Bot()

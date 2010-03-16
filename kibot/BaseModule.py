@@ -1,7 +1,7 @@
 import os
 
-import kibot.Stasher
-from kibot.Settings import init_settings
+import Stasher
+from Settings import init_settings
 class NoDefault: pass
 
 class BaseModule:
@@ -42,7 +42,7 @@ class BaseModule:
             def_stash_basename = "%s.%s" % (self.__class__.__name__, format)
             file = getattr(self, '_stash_file', def_stash_basename)
         stash_file = os.path.join(self.bot.op.files.data_dir, file)
-        return kibot.Stasher.get_stasher(stash_file, format, **kwargs)
+        return Stasher.get_stasher(stash_file, format, **kwargs)
             
     def _stash(self, default=NoDefault):
         """Store the attributes listed in self._stash_attrs in a stasher.

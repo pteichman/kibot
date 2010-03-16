@@ -2,13 +2,13 @@ import string
 import re
 import time
 
-import kibot.BaseModule
-from kibot.irclib import irc_lower, nm_to_n, is_channel
-from kibot.m_irclib import DirectConnection, Event
+import BaseModule
+from irclib import irc_lower, nm_to_n, is_channel
+from m_irclib import DirectConnection, Event
 
-from kibot.PermObjects import cpString, PermError
+from PermObjects import cpString, PermError
 
-class CommandHandler(kibot.BaseModule.BaseModule):
+class CommandHandler(BaseModule.BaseModule):
     """This class is for handling bot commands.  An instance will
     be stored as bot.command_handler, but has no public methods
     and should not be accessed directly."""

@@ -1,4 +1,4 @@
-from kibot.PermObjects import translate_cperm
+from PermObjects import translate_cperm
 
 class NoDefaultClass:
     """Special class used for implementing "no default".  Doing the

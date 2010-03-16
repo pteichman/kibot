@@ -10,17 +10,17 @@ import os
 import os.path
 import errno
 
-from kibot import irclib
-from kibot.irclib import _linesep_regexp, _rfc_1459_command_regexp
-from kibot.irclib import all_events, generated_events, protocol_events, \
+import irclib
+from irclib import _linesep_regexp, _rfc_1459_command_regexp
+from irclib import all_events, generated_events, protocol_events, \
      numeric_events
-from kibot.irclib import is_channel, _ctcp_dequote, nm_to_n
+from irclib import is_channel, _ctcp_dequote, nm_to_n
 def _ping_ponger(conn, event): conn.pong(event.target)
 irclib._ping_ponger = _ping_ponger
 
-import kibot.Flood
-import kibot.logger
-log = kibot.logger.Logger(threshold=10)
+import Flood
+import logger
+log = logger.Logger(threshold=10)
 
 class StopHandlingEvent(Exception): pass
 
@@ -269,7 +269,7 @@ class DirectConnection(irclib.Connection):
 class ServerConnection(irclib.ServerConnection):
     def __init__(self, irclibobj):
         irclib.ServerConnection.__init__(self, irclibobj)
-        self.fp = kibot.Flood.FloodProtector()
+        self.fp = Flood.FloodProtector()
         self._set_handlers()
         self.channel_keys = {}
 

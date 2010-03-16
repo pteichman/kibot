@@ -9,17 +9,17 @@ import time
 import types
 import copy
 
-import kibot.BaseModule
-import kibot.Stasher
-from kibot.PermObjects import UPermCache
+import BaseModule
+import Stasher
+from PermObjects import UPermCache
 
-from kibot.irclib import nm_to_n, irc_lower, parse_channel_modes, \
+from irclib import nm_to_n, irc_lower, parse_channel_modes, \
      is_channel, mask_matches
-from kibot.m_irclib import Timer, Event
+from m_irclib import Timer, Event
 
 class UserError(Exception): pass
 
-class ircDB(kibot.BaseModule.BaseModule):
+class ircDB(BaseModule.BaseModule):
     """manages the following information 'automatically':
 
     list of channels
@@ -54,9 +54,9 @@ class ircDB(kibot.BaseModule.BaseModule):
         sys.modules['mbot.ircDB'] = sys.modules[self.__module__]
         ################################################################
 
-        self.known   = kibot.Stasher.get_stasher(self.bot.op.files.ircdb_file)
+        self.known   = Stasher.get_stasher(self.bot.op.files.ircdb_file)
         ircdata_file = os.path.join(self.bot.op.files.data_dir, 'ircdata.repr')
-        self.ircdata = kibot.Stasher.get_stasher(ircdata_file)
+        self.ircdata = Stasher.get_stasher(ircdata_file)
         if not self.ircdata.has_key('channels'):
             self.ircdata['channels'] = {}
 
