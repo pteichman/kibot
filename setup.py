@@ -18,6 +18,11 @@ setup(
         "console_scripts" : [
             "kibot = kibot.cmd_kibot:main",
             "kibot-control = kibot.cmd_control:main"
+        ],
+        "kibot.modules" : [
+            "module = kibot.modules.auth:auth",
+            "module = kibot.modules.base:base",
+            "module = kibot.modules.irc:irc"
         ]
     }
 )
