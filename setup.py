@@ -11,8 +11,8 @@ setup(
     author_email = "peter@teichman.org",
     url = "http://wiki.github.com/pteichman/kibot/",
     description = "A simple IRC bot extensible with plugins.",
-    packages = ["kibot",
-                "kibot.modules"],
+    packages = find_packages(),
+    namespace_packages = ["kibot", "kibot.modules"],
     classifiers = [
     ],
     entry_points = {
