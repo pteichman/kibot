@@ -17,8 +17,8 @@ setup(
     ],
     entry_points = {
         "console_scripts" : [
-            "kibot = kibot.cmd_kibot:main",
-            "kibot-control = kibot.cmd_control:main"
+            "kibot = kibot.scripts:kibot",
+            "kibot-control = kibot.scripts:kibot_control"
         ],
         "kibot.modules" : [
             "acro = kibot.modules.acro",

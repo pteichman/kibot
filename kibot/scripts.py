@@ -9,6 +9,10 @@ import time
 import kibot.Options
 import kibot.OptionParser
 
+def main():
+    import kibot.Bot
+    bot = kibot.Bot.Bot()
+
 DEBUG=0
 def dblog(message):
     if DEBUG: sys.stderr.write(message + '\n')
@@ -82,7 +86,7 @@ Usage: kibot-control [options] [DC address]
 """)
     sys.exit()
 
-def main():
+def kibot_control():
     try:
         op, dc_addr, pidfile = get_options(sys.argv[1:])
     except kibot.OptionParser.OptionError, e:
@@ -184,4 +188,4 @@ def dc_connect(dc_addr):
         tn.close()
 
 if __name__ == '__main__':
-    main()
+    kibot()
