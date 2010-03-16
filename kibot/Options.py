@@ -9,9 +9,7 @@ DEBUG = 0
 DEF_BOTMOD_PATH = ['modules', '@EXPANDED_PKGDATADIR@/modules']
 DEF_PYMOD_PATH  = ['pymod',   '@EXPANDED_PKGDATADIR@/pymod']
 __package__ = 'kibot'
-__version__ = '@VERSION@'
-__author__  = 'Michael D. Stenner <mstenner@phy.duke.edu>'
-__url__     = 'http://linux.duke.edu/projects/kibot/'
+__url__     = 'http://wiki.github.com/pteichman/kibot/'
 
 def fill_options(o):
     #     type      name                short long default
@@ -73,7 +71,6 @@ def fill_options(o):
 
 def printhelp(o):
     print "%s -- a modular python-based IRC bot" % __package__
-    print "  v%s %s" % (__version__, __author__)
     print "  %s" % __url__
     print
     print "Usage: %s [options]" % __package__

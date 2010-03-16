@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 import sys
 import os
 import os.path
@@ -7,17 +6,8 @@ import signal
 import telnetlib
 import time
 
-# if we're running in a development environment, add the toplevel
-# directory to the python path
-try:
-    import kibot_devel
-    sys.path.insert(0, os.path.dirname(os.path.dirname(sys.argv[0])))
-except ImportError:
-    pass
-
 import kibot.Options
 import kibot.OptionParser
-from kibot.Options import __version__, __author__
 
 DEBUG=0
 def dblog(message):
@@ -76,9 +66,8 @@ def get_options(cmd_line):
     return (final, dc_addr, pidfile)
 
 def dohelp():
-    sys.stderr.write( \
+    sys.stderr.write(
 """kibot-control -- administrative control program for kibot
-   v%s %s
 
 Usage: kibot-control [options] [DC address]
   -h, --help                print this help message
@@ -90,7 +79,7 @@ Usage: kibot-control [options] [DC address]
   --reload                  ask the bot to reload its config
   --pid                     print the pid of the bot
   --signal=VAL              send signal VAL to the bot
-""" % (__version__, __author__) )
+""")
     sys.exit()
 
 def main():

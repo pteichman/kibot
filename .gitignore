@@ -11,11 +11,12 @@ config.status
 configure
 data
 depcomp
+dist
 doc/modulehelp.html
 install-sh
 kibot-*
+kibot.egg-info
 kibot.pid
-kibot/Options.py
 missing
 modules/Makefile
 py-compile
