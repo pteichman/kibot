@@ -11,7 +11,8 @@ setup(
     author_email = "peter@teichman.org",
     url = "http://wiki.github.com/pteichman/kibot/",
     description = "A simple IRC bot extensible with plugins.",
-    packages = ["kibot"],
+    packages = ["kibot",
+                "kibot.modules"],
     classifiers = [
     ],
     entry_points = {
@@ -20,9 +21,19 @@ setup(
             "kibot-control = kibot.cmd_control:main"
         ],
         "kibot.modules" : [
+            "acro = kibot.modules.acro",
             "auth = kibot.modules.auth",
             "base = kibot.modules.base",
-            "irc = kibot.modules.irc"
+            "bugzilla = kibot.modules.bugzilla",
+            "debug = kibot.modules.debug",
+            "irc = kibot.modules.irc",
+            "log = kibot.modules.log",
+            "messaging = kibot.modules.messaging",
+            "rand = kibot.modules.rand",
+            "slashdot = kibot.modules.slashdot",
+            "test = kibot.modules.test",
+            "units = kibot.modules.units",
+            "whereis = kibot.modules.whereis"
         ]
     }
 )
