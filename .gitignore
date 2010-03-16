@@ -1,4 +1,4 @@
-**/*.pyc
+*.pyc
 Makefile
 Makefile.in
 aclocal.m4
