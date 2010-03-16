@@ -1,9 +1,9 @@
+import hashlib
 import pickle
 import string
 import re
 import os
 import os.path
-import sha
 import socket
 import time
 import types
@@ -669,11 +669,11 @@ class KnownUser:
     ########################################################
     # raw password functions.  Create a pair for each password type
     def _set_password_sha(self, clear):
-        sha_obj = sha.new(clear)
+        sha_obj = hashlib.sha1.new(clear)
         self.password = ('sha', sha_obj.hexdigest())
 
     def _check_password_sha(self, clear):
-        sha_obj = sha.new(clear)
+        sha_obj = hashlib.sha1.new(clear)
         return self.password[1] == sha_obj.hexdigest()
 
 class GodUser(KnownUser):
