@@ -2,6 +2,7 @@ import string
 import sys
 import re
 import linecache
+import pkg_resources
 from copy import copy
 
 from ihooks import BasicModuleLoader
@@ -22,7 +23,7 @@ class ModuleManager(kibot.BaseModule.BaseModule):
     def __init__(self, bot):
         self.bot = bot
         self._load()
-        
+
     def _load(self):
         if self.bot.tmp.has_key(self._tmp_key):
             # modules are already loaded - just put them in place
@@ -98,7 +99,7 @@ class ModuleManager(kibot.BaseModule.BaseModule):
             data = (None, None, None, None)
 
         obj, cperm, cperm_parent, cperm_name = data
-        
+
         if not obj: return (None, None)
         elif cperm == NoPerm: return (obj, None)
         elif isinstance(cperm, CPerm): return (obj, cperm)
@@ -107,14 +108,14 @@ class ModuleManager(kibot.BaseModule.BaseModule):
             setattr(cperm_parent, cperm_name, new_cperm)
             self.bot.log(6, 'translating %s to %s' % (cperm, new_cperm))
             return (obj, new_cperm)
-            
+
     def _find_module(self, modname):
         pymod, inst = self.modules.get(modname, (None, None))
         if pymod: # found it - must be a module
             perm_obj = getattr(inst, '_cperm', NoPerm)
             return (inst, perm_obj, inst, '_cperm')
         return (None, None, None, None)
-        
+
     def _find_obj_in_module_path(self, object_name):
         for modname in self.modules_list:
             data = self._find_obj_in_module(modname, object_name)
@@ -128,7 +129,7 @@ class ModuleManager(kibot.BaseModule.BaseModule):
             perm_obj = getattr(inst, permname, NoPerm)
             return (getattr(inst, object_name), perm_obj, inst, permname)
         return (None, None, None, None)
-    
+
     def load(self, name):
         """load a bot module by name"""
 
@@ -137,6 +138,15 @@ class ModuleManager(kibot.BaseModule.BaseModule):
             self.bot.log(1, 'ALREADY LOADED: %s' % name)
             return 0
         module = None
+
+        # first, try loading from eggs
+        for entrypoint in pkg_resources.iter_entry_points("kibot.modules"):
+            if entrypoint.name == name:
+                self.bot.log(5, 'LOADING MODULE: %s' % entrypoint)
+                module = entrypoint.load()
+                if module: break
+
+        # legacy module loading from the load_path
         for directory in self.bot.op.modules.load_path:
             self.bot.log(5, 'LOOKING IN: %s' % directory)
             stuff = Loader.find_module_in_dir(name, directory)
@@ -153,7 +163,7 @@ class ModuleManager(kibot.BaseModule.BaseModule):
         else:
             self.bot.log(0, 'MODULE NOT FOUND: %s' % name)
             return 0
-        
+
     def unload(self, name):
         """unload a bot module by name"""
         if name in self.modules_list:
@@ -191,7 +201,7 @@ class ModuleManager(kibot.BaseModule.BaseModule):
             return 1
         else:
             return 0
-    
+
     def reload(self, name):
         """reload a bot module by name
         This differs from "load; reload;" only in that the path
