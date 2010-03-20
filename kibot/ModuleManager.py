@@ -142,7 +142,9 @@ class ModuleManager(BaseModule.BaseModule):
         # first, try loading from eggs
         for entrypoint in pkg_resources.iter_entry_points("kibot.modules"):
             if entrypoint.name == name:
-                self.bot.log(5, 'LOADING MODULE: %s' % entrypoint)
+                self.bot.log(5, 'LOADING MODULE: %s (%s)' % (entrypoint,
+                                                             entrypoint.dist))
+
                 module = entrypoint.load()
                 if module: break
 
