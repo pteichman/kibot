@@ -148,13 +148,15 @@ class ModuleManager(BaseModule.BaseModule):
                 module = entrypoint.load()
                 if module: break
 
-        # legacy module loading from the load_path
-        for directory in self.bot.op.modules.load_path:
-            self.bot.log(5, 'LOOKING IN: %s' % directory)
-            stuff = Loader.find_module_in_dir(name, directory)
-            if stuff:
-                module = Loader.load_module(name, stuff)
-                if module: break
+        if module is None:
+            # legacy module loading from the load_path
+            for directory in self.bot.op.modules.load_path:
+                self.bot.log(5, 'LOOKING IN: %s' % directory)
+                stuff = Loader.find_module_in_dir(name, directory)
+                if stuff:
+                    module = Loader.load_module(name, stuff)
+                    if module: break
+
         if module:
             cls = getattr(module, name) # look for class of same name
             self.modules[name] = (module, cls(self.bot))
