@@ -145,7 +145,7 @@ class ModuleManager(BaseModule.BaseModule):
                 self.bot.log(5, 'LOADING MODULE: %s (%s)' % (entrypoint,
                                                              entrypoint.dist))
 
-                module = entrypoint.load()
+                module = entrypoint.load(require=True)
                 if module: break
 
         if module is None:
