@@ -6,8 +6,8 @@ import os.path
 from OptionParser import OptionParser, OptionError
 
 DEBUG = 0
-DEF_BOTMOD_PATH = ['modules', '@EXPANDED_PKGDATADIR@/modules']
-DEF_PYMOD_PATH  = ['pymod',   '@EXPANDED_PKGDATADIR@/pymod']
+DEF_BOTMOD_PATH = ['modules']
+DEF_PYMOD_PATH  = ['pymod']
 __package__ = 'kibot'
 __url__     = 'http://wiki.github.com/pteichman/kibot/'
 
