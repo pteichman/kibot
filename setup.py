@@ -21,19 +21,12 @@ setup(
             "kibot-control = kibot.scripts:kibot_control"
         ],
         "kibot.modules" : [
-            "acro = kibot.modules.acro",
             "auth = kibot.modules.auth",
             "base = kibot.modules.base",
-            "bugzilla = kibot.modules.bugzilla",
-            "debug = kibot.modules.debug",
             "irc = kibot.modules.irc",
             "log = kibot.modules.log",
             "messaging = kibot.modules.messaging",
-            "rand = kibot.modules.rand",
-            "slashdot = kibot.modules.slashdot",
-            "test = kibot.modules.test",
-            "units = kibot.modules.units",
-            "whereis = kibot.modules.whereis"
+            "rand = kibot.modules.rand"
         ]
     }
 )
