@@ -1,4 +1,5 @@
 *.pyc
+build
 data
 dist
 doc/modulehelp.html
