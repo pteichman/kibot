@@ -57,7 +57,7 @@ class boolOption(baseOption):
         if self.true_regex.match(st): return 1
         elif self.false_regex.match(st): return 0
         else:
-            raise OptionError("illegal boolean value: %s" % `st`)
+            raise OptionError("illegal boolean value: %s" % repr(st))
 
     def value_from_getopt(self, st):
         # this will only ever be called if it's true :)
@@ -178,7 +178,8 @@ class OptionParser:
                 opmap['--' + op.long] = op
 
         if DEBUG:
-            print 'DEBUG: getopt(%s, %s, %s)' % (`cmd_line`, `short`, `longopt`)
+            print 'DEBUG: getopt(%s, %s, %s)' % (repr(cmd_line), repr(short),
+                                                 repr(longopt))
         try: cl_ops, args = getopt.getopt(cmd_line, short, longopt)
         except getopt.GetoptError, msg: raise OptionError(str(msg))
         oc._args = args
@@ -338,6 +339,6 @@ if __name__ == '__main__':
     # get config file
     o.load_ConfigParser('options.test')
     final = o.overlay(['defaults', 'config file', 'command line'])
-    sys.stdout.write(`final`)
+    sys.stdout.write(repr(final))
     print o.help()
     print o.sample_file()
