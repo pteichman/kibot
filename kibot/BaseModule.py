@@ -37,13 +37,14 @@ class BaseModule:
     _stash_format = 'pickle'
     _stash_attrs = []
     #_stash_file = 'foo.pickle'    # will appear in the "data_dir"
-    def _get_stasher(self, file=None, format=None, **kwargs):
-        if not format: format = self._stash_format
-        if not file:
-            def_stash_basename = "%s.%s" % (self.__class__.__name__, format)
-            file = getattr(self, '_stash_file', def_stash_basename)
-        stash_file = os.path.join(self.bot.op.files.data_dir, file)
-        return Stasher.get_stasher(stash_file, format, **kwargs)
+    def _get_stasher(self, filename=None, stash_format=None, **kwargs):
+        if not stash_format: stash_format = self._stash_format
+        if not filename:
+            def_stash_basename = "%s.%s" % (self.__class__.__name__,
+                                            stash_format)
+            filename = getattr(self, '_stash_file', def_stash_basename)
+        stash_file = os.path.join(self.bot.op.files.data_dir, filename)
+        return Stasher.get_stasher(stash_file, stash_format, **kwargs)
             
     def _stash(self, default=NoDefault):
         """Store the attributes listed in self._stash_attrs in a stasher.
