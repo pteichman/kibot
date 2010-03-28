@@ -16,13 +16,11 @@ from . import m_irclib
 from . import permDB
 from . import timeoutsocket
 
-"""
-handler priorities:
+class Bot:
+    """handler priorities:
   < 0   internal bot functions
   = 0   fastest module function
-  = 10  "automatic" module functions
-"""
-class Bot:
+  = 10  "automatic" module functions"""
     def __init__(self):
         # options
         self.op = Options.options(sys.argv[1:])
