@@ -51,7 +51,7 @@ class permDB(BaseModule.BaseModule):
     def _recur_get_perm(self, perm, tree, pmap=None, depth=1):
         if pmap is None: pmap = {}
         try: l = tree[perm]
-        except KeyError, msg: return pmap
+        except KeyError: return pmap
         for p in l:
             if not p in pmap: pmap[p] = depth
             if p == perm: continue
@@ -61,7 +61,7 @@ class permDB(BaseModule.BaseModule):
     ##############################################################
     def expand_alias(self, command):
         try: return self.aliases[command]
-        except KeyError, msg: return command
+        except KeyError: return command
 
     def set_unknown_perms(self, newperms):
         self._cached_unknown_perms = None
@@ -107,11 +107,11 @@ class permDB(BaseModule.BaseModule):
 
     def imply_depth(self, base_perm, implied_perm):
         try: return self._imply[base_perm][implied_perm]
-        except KeyError, e: return None
+        except KeyError: return None
 
     def grant_depth(self, base_perm, granted_perm):
         try: return self._grant[base_perm][granted_perm]
-        except KeyError, e: return None
+        except KeyError: return None
 
     def implied_by(self, perm):
         imp = []
