@@ -13,21 +13,20 @@ default_grant = {
     }
 
 class permDB(BaseModule.BaseModule):
-    def __init__(self, bot):
-        BaseModule.BaseModule.__init__(self, bot)
-        self._load()
-
     _stash_attrs = ['imply', 'grant', 'aliases',
                     'unknown_perms', 'default_perms']
     _stash_format = 'repr'
-    def _load(self):
+    def __init__(self, bot):
+        BaseModule.BaseModule.__init__(self, bot)
+
         self.imply = default_imply
         self.grant = default_grant
         self.aliases = {}
         self.unknown_perms = []
         self.default_perms = []
 
-        self._expand()
+        self._imply = self._expand_tree(self.imply)
+        self._grant = self._expand_tree(self.grant)
 
         ## get override perms
         override_file = self.bot.op.files.override_file
@@ -37,10 +36,6 @@ class permDB(BaseModule.BaseModule):
             self.override_perms = tmpspace['override']
         else:
             self.override_perms = {}
-
-    def _expand(self):
-        self._imply = self._expand_tree(self.imply)
-        self._grant = self._expand_tree(self.grant)
 
     def _expand_tree(self, tree):
         newtree = {}
