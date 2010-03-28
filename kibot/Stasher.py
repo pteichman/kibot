@@ -10,9 +10,9 @@ import pprint
 class StasherError(Exception): pass
 
 class BaseStasher:
-    def __init__(self, file, autosync=1, readonly=0,
+    def __init__(self, filename, autosync=1, readonly=0,
                  checkkeys=0, checkvalues=0, numbackups=5):
-        self.file = file
+        self.file = filename
         self._autosync = autosync
         self._readonly = readonly
 
@@ -41,10 +41,10 @@ class BaseStasher:
 
     #################################
 
-    def update(self, dict):
+    def update(self, update_dict):
         if self._readonly:
             raise StasherError, "stasher is read-only"
-        for key, value in dict.items():
+        for key, value in update_dict.items():
             if self._checkkeys:   self._check_key(key)
             if self._checkvalues: self._check_value(value)
             self.dict[key] = value
@@ -208,10 +208,10 @@ class ReprStasher(BaseStasher):
 _stasher_formats = {'pickle': PickleStasher,
                     'shelve': ShelveStasher,
                     'repr':   ReprStasher}
-def get_stasher(file, format=None, **kwargs):
-    if format is None: format = guess_format(file)
-    driver = _stasher_formats[format]
-    return driver(file, **kwargs)
+def get_stasher(filename, stash_format=None, **kwargs):
+    if stash_format is None: stash_format = guess_format(filename)
+    driver = _stasher_formats[stash_format]
+    return driver(filename, **kwargs)
 
 def guess_format(filename):
     # can probably make this smarter
@@ -221,13 +221,13 @@ def guess_format(filename):
 
 def test():
     testfile = 'testfile'
-    dict = {'foo': 'bar', 'baz': 13}
+    testdict = {'foo': 'bar', 'baz': 13}
 
-    for format, klass in _stasher_formats.items():
-        print '---------- %s ----------' % format
-        fn  = "%s.%s" % (testfile, format)
+    for stash_format, klass in _stasher_formats.items():
+        print '---------- %s ----------' % stash_format
+        fn  = "%s.%s" % (testfile, stash_format)
         st = klass(fn)
-        for k, v in dict.items():
+        for k, v in testdict.items():
             st[k] = v
         st.close()
 
@@ -242,6 +242,6 @@ if __name__ == '__main__':
     if sys.argv[1:] == ['test']:
         test()
     elif sys.argv[1] == 'dump':
-        filename = sys.argv[2]
-        st = get_stasher(filename, format=None, readonly=1)
-        pprint.pprint(st)
+        _filename = sys.argv[2]
+        _st = get_stasher(_filename, format=None, readonly=1)
+        pprint.pprint(_st)
