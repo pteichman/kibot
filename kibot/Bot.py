@@ -4,6 +4,7 @@ import os
 import os.path
 import time
 import signal
+import socket
 
 from . import BaseModule
 from . import CommandHandler
@@ -14,7 +15,6 @@ from . import ircDB
 from . import logger
 from . import m_irclib
 from . import permDB
-from . import timeoutsocket
 
 class Bot:
     """handler priorities:
@@ -34,7 +34,7 @@ class Bot:
 
         self.log(5, 'Setting socket timeout to %s seconds' % \
                  self.op.admin.timeout)
-        timeoutsocket.setDefaultSocketTimeout(self.op.admin.timeout)
+        socket.setdefaulttimeout(self.op.admin.timeout)
 
         if not os.path.exists(self.op.files.data_dir):
             try: os.makedirs(self.op.files.data_dir)
