@@ -156,36 +156,36 @@ def _parse_signal(sig):
     return numsig
 
 def dc_connect(dc_addr):
-        host = ''
-        dblog('DC address: %s' % dc_addr)
-        if type(dc_addr) == type('') and ':' in dc_addr:
-            host, port = dc_addr.split(':', 1)
-        else:
-            port = dc_addr
+    host = ''
+    dblog('DC address: %s' % dc_addr)
+    if type(dc_addr) == type('') and ':' in dc_addr:
+        host, port = dc_addr.split(':', 1)
+    else:
+        port = dc_addr
 
-        try:
-            port = int(port)
-        except ValueError, e:
-            ctype = 'unix'
-            host, port = dc_addr, 0
-            addr = host
-        else:
-            ctype = 'inet'
-            lastslash = host.rindex('/')
-            host = host[lastslash+1:]
-            addr = '%s:%s' % (host, port)
+    try:
+        port = int(port)
+    except ValueError, e:
+        ctype = 'unix'
+        host, port = dc_addr, 0
+        addr = host
+    else:
+        ctype = 'inet'
+        lastslash = host.rindex('/')
+        host = host[lastslash+1:]
+        addr = '%s:%s' % (host, port)
 
-        if ctype == 'unix': tn = UNIXTelnet()
-        else:               tn = telnetlib.Telnet()
+    if ctype == 'unix': tn = UNIXTelnet()
+    else:               tn = telnetlib.Telnet()
 
-        try:
-            tn.open(host, port)
-        except socket.error, e:
-            sys.exit('FATAL: Failed to connect to %s socket %s\n       %s' \
-                     % (ctype, addr, str(e.args[1])))
-        print 'connecting on %s socket %s' % (ctype, addr)
-        tn.interact()
-        tn.close()
+    try:
+        tn.open(host, port)
+    except socket.error, e:
+        sys.exit('FATAL: Failed to connect to %s socket %s\n       %s' \
+                 % (ctype, addr, str(e.args[1])))
+    print 'connecting on %s socket %s' % (ctype, addr)
+    tn.interact()
+    tn.close()
 
 if __name__ == '__main__':
     kibot()
