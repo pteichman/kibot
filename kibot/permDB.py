@@ -14,7 +14,7 @@ default_grant = {
 
 class permDB(BaseModule.BaseModule):
     def __init__(self, bot):
-        self.bot = bot
+        BaseModule.BaseModule.__init__(self, bot)
         self._load()
 
     _stash_attrs = ['imply', 'grant', 'aliases',
@@ -26,7 +26,6 @@ class permDB(BaseModule.BaseModule):
         self.aliases = {}
         self.unknown_perms = []
         self.default_perms = []
-        self._unstash()
 
         self._expand()
 
