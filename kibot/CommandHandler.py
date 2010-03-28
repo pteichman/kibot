@@ -133,7 +133,7 @@ class CommandHandler(BaseModule.BaseModule):
         context = {'bot': self.bot, 'cmd': cmd}
         if self._ignore_perm.trycheck(uperms, context):
             self.bot.log(2, "IGNORING: nick=%s, userid=%s" % \
-                    (cmd.nick, user.userid))
+                    (cmd.nick, userid))
             return 1 # silently ignore
         else:
             return 0
