@@ -107,7 +107,6 @@ class irc(kibot.BaseModule.BaseModule):
 
         chan_obj = self.bot.ircdb.channels[channel]
         chnicks = chan_obj.users()
-        chopers = chan_obj.opers()
         for nick in nicks:
             if nick not in chnicks:
                 cmd.reply("There is no %s on %s" % (nick, channel))
@@ -360,7 +359,6 @@ class irc(kibot.BaseModule.BaseModule):
         for oper in opers:
             if oper in users: users.remove(oper)
 
-        permdb = self.bot.permdb
         context = {'bot': self.bot, 'channel': 'NONE', 'target': channel}
         for nick in users:
             user = self.bot.ircdb.get_user(nick)
