@@ -1,6 +1,3 @@
-#!/usr/bin/python2
-import string
-
 import kibot.BaseModule
 from kibot.PermObjects import cpString, cpTargetChannel
 
@@ -229,7 +226,7 @@ class irc(kibot.BaseModule.BaseModule):
 
     def _on_mode(self, c, e):
         mynick = self.bot.nick
-        modes = parse_channel_modes(string.join(e.args))
+        modes = parse_channel_modes(' '.join(e.args))
         t = e.target
         if is_channel(t):
             if not self._i_have_op(t): return

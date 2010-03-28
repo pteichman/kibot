@@ -2,7 +2,6 @@ import traceback
 import sys
 import os
 import os.path
-import string
 import time
 import signal
 
@@ -188,7 +187,7 @@ class Bot:
             mod_name = attr.__module__
             mod_obj = sys.modules[mod_name]
             reload(mod_obj)
-            cls_name = string.split(mod_name, '.')[-1]
+            cls_name = mod_name.split('.')[-1]
             obj = getattr(mod_obj, cls_name)(self)
             setattr(self, name, obj)
         return 1

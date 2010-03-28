@@ -1,6 +1,5 @@
 import hashlib
 import pickle
-import string
 import re
 import os
 import os.path
@@ -325,16 +324,16 @@ class ircDB(BaseModule.BaseModule):
         self.users[after].rename(before, after)
 
     def _default_mask_from_nickmask(self, nm):
-        nick, userhost = string.split(nm, '!')
-        user, host = string.split(userhost, '@')
+        nick, userhost = nm.split('!')
+        user, host = userhost.split('@')
 
-        host_list = string.split(host, '.')
+        host_list = host.split('.')
         if re.match(r'^\d+\.\d+\.\d+\.\d+$', host): # numeric address
             # any machine in that class c subnet
-            host = string.join(host_list[:-1], '.') + '.*'
+            host = '.'.join(host_list[:-1]) + '.*'
         elif len(host_list) > 2: # got a name
             # any machine in that domain, unless it would be something like *.edu
-            host = '*.' + string.join(host_list[1:], '.')
+            host = '*.' + '.'.join(host_list[1:])
         # any nick
         nick = '*'
         # any user "prefixes"
@@ -373,7 +372,7 @@ class ircDB(BaseModule.BaseModule):
 
     def _on_channelmodeis(self, c, e):
         chan_name = e.args[0]
-        raw_modes = string.join(e.args[1:])
+        raw_modes = ' '.join(e.args[1:])
         modes = parse_channel_modes(raw_modes)
 
         channel = self.channels[chan_name]
@@ -427,7 +426,7 @@ class ircDB(BaseModule.BaseModule):
 
     def _on_mode(self, c, e):
         """[Internal]"""
-        modes = parse_channel_modes(string.join(e.args))
+        modes = parse_channel_modes(' '.join(e.args))
         t = e.target
         if is_channel(t):
             channel = self.channels[t]
@@ -449,7 +448,7 @@ class ircDB(BaseModule.BaseModule):
         # e.args[2] == nick list
 
         ch = e.args[1]
-        for nick in string.split(e.args[2]):
+        for nick in e.args[2].split():
             if nick[0] == "@":
                 nick = nick[1:]
                 self.channels[ch].set_mode("o", nick)

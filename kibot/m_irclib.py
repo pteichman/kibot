@@ -1,7 +1,6 @@
 import select
 import time
 import bisect
-import string
 import types
 import traceback
 import sys
@@ -99,7 +98,7 @@ class IRC(irclib.IRC):
             except Exception, msg:
                 lexc = traceback.format_exception(sys.exc_type, sys.exc_value,
                                                   sys.exc_traceback)
-                exc = string.join(lexc)
+                exc = ' '.join(lexc)
                 log(0, "Handler raised exception:\n%s" % exc)
 
 class Timer(object):
@@ -359,11 +358,11 @@ class ServerConnection(irclib.ServerConnection):
                     self.real_server_name = prefix
 
             if m.group("command"):
-                command = string.lower(m.group("command"))
+                command = m.group("command").lower()
 
             if m.group("argument"):
-                a = string.split(m.group("argument"), " :", 1)
-                arguments = string.split(a[0])
+                a = m.group("argument").split(" :", 1)
+                arguments = a[0].split()
                 if len(a) == 2:
                     arguments.append(a[1])
 

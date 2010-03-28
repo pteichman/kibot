@@ -1,4 +1,3 @@
-import string
 import re
 import time
 
@@ -146,9 +145,9 @@ class CommandHandler(BaseModule.BaseModule):
         """split a command line into command and args
         args is a single string"""
 
-        cmd_list = string.split(command, ' ', 1)
+        cmd_list = command.split(' ', 1)
         cmd = cmd_list.pop(0)
-        if cmd_list: args = string.strip(cmd_list[0])
+        if cmd_list: args = cmd_list[0].strip()
         else: args = ''
         return cmd, args
 
@@ -181,7 +180,7 @@ class ReplyObject:
             message = str(arg_list[0])
         else:
             target = arg_list[0]
-            message = string.join(map(str, arg_list[1:]), ' ')
+            message = ' '.join(map(str, arg_list[1:]))
         return(target, message)
 
 class IRCReply(ReplyObject):
@@ -351,7 +350,7 @@ class Command:
 
     def asplit(self, maxsplit=-1):
         """split the arguments string on whitespace"""
-        return string.split(self.args, None, maxsplit)
+        return self.args.split(None, maxsplit)
 
     def shsplit(self, maxsplit=-1):
         """split the arguments string shell-style (quotes and backslashes)"""

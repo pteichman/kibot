@@ -146,7 +146,6 @@ DATE    = "2002/06/07"
 # Copyright 2001-2002 Michael D. Stenner
 
 import sys
-import string
 
 class Logger:
     """
@@ -249,10 +248,10 @@ class Logger:
         p, m = self._use_default(priority, message)
         if self.test(p):
             if type(m) == type(''): # message is a string
-                mlist = string.split(m, '\n')
+                mlist = m.split('\n')
                 if mlist[-1] == '': del mlist[-1] # string ends in \n
             elif type(m) == type([]): # message is a list
-                mlist = map(string.rstrip, m)
+                mlist = [s.rstrip() for s in m]
             else: mlist = [str(m)] # message is other type
 
             prefix = self.gen_prefix(p)
