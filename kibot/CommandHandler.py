@@ -3,7 +3,7 @@ import re
 import time
 
 from . import BaseModule
-from .irclib import irc_lower, nm_to_n, is_channel
+from .irclib import nm_to_n, is_channel
 from .m_irclib import DirectConnection, Event
 from .PermObjects import cpString, PermError
 

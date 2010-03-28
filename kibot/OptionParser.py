@@ -2,7 +2,6 @@
 import re
 import getopt
 import ConfigParser
-import pprint
 import os
 import os.path
 

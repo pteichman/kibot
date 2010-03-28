@@ -1,5 +1,3 @@
-import string
-import sys
 import re
 import linecache
 import pkg_resources
