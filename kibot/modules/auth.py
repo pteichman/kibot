@@ -141,7 +141,7 @@ class auth:
         """
         try:
             self.bot.ircdb.del_user(userid=cmd.args)
-        except UserError, msg:
+        except UserError:
             cmd.reply("I don't know anyone by that userid")
         else:
             self.bot.ircdb.save()
