@@ -1,6 +1,5 @@
 import select
 import time
-import bisect
 import types
 import traceback
 import sys
@@ -10,10 +9,8 @@ import os.path
 import errno
 
 from . import irclib
-from .irclib import _linesep_regexp, _rfc_1459_command_regexp
-from .irclib import (all_events, generated_events, protocol_events,
-                     numeric_events)
-from .irclib import is_channel, _ctcp_dequote, nm_to_n
+from .irclib import (_linesep_regexp, _rfc_1459_command_regexp,
+                     numeric_events, is_channel, nm_to_n, _ctcp_dequote)
 
 def _ping_ponger(conn, event): conn.pong(event.target)
 irclib._ping_ponger = _ping_ponger
