@@ -1,6 +1,6 @@
 import os.path
-import BaseModule
-from PermObjects import UPermCache
+from . import BaseModule
+from .PermObjects import UPermCache
 class CommandNotFoundError(Exception): pass
 
 default_imply = {

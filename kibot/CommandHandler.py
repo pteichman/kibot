@@ -2,11 +2,10 @@ import string
 import re
 import time
 
-import BaseModule
-from irclib import irc_lower, nm_to_n, is_channel
-from m_irclib import DirectConnection, Event
-
-from PermObjects import cpString, PermError
+from . import BaseModule
+from .irclib import irc_lower, nm_to_n, is_channel
+from .m_irclib import DirectConnection, Event
+from .PermObjects import cpString, PermError
 
 class CommandHandler(BaseModule.BaseModule):
     """This class is for handling bot commands.  An instance will

@@ -6,11 +6,11 @@ import signal
 import telnetlib
 import time
 
-import Options
-import OptionParser
+from . import Options
+from . import OptionParser
 
 def kibot():
-    import Bot
+    from . import Bot
     bot = Bot.Bot()
 
 DEBUG=0

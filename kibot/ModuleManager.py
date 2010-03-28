@@ -8,8 +8,8 @@ from copy import copy
 from ihooks import BasicModuleLoader
 Loader = BasicModuleLoader()
 
-import BaseModule
-from PermObjects import CPerm, translate_cperm
+from . import BaseModule
+from .PermObjects import CPerm, translate_cperm
 
 class NoPerm: pass
 

@@ -10,16 +10,17 @@ import os
 import os.path
 import errno
 
-import irclib
-from irclib import _linesep_regexp, _rfc_1459_command_regexp
-from irclib import all_events, generated_events, protocol_events, \
-     numeric_events
-from irclib import is_channel, _ctcp_dequote, nm_to_n
+from . import irclib
+from .irclib import _linesep_regexp, _rfc_1459_command_regexp
+from .irclib import (all_events, generated_events, protocol_events,
+                     numeric_events)
+from .irclib import is_channel, _ctcp_dequote, nm_to_n
+
 def _ping_ponger(conn, event): conn.pong(event.target)
 irclib._ping_ponger = _ping_ponger
 
-import Flood
-import logger
+from . import Flood
+from . import logger
 log = logger.Logger(threshold=10)
 
 class StopHandlingEvent(Exception): pass

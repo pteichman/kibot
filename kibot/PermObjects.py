@@ -1,6 +1,6 @@
 import fnmatch
 
-from irclib import is_channel
+from .irclib import is_channel
 
 class UserPerm:
     default_channel_list = ['*']

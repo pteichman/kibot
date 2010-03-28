@@ -9,13 +9,12 @@ import time
 import types
 import copy
 
-import BaseModule
-import Stasher
-from PermObjects import UPermCache
-
-from irclib import nm_to_n, irc_lower, parse_channel_modes, \
-     is_channel, mask_matches
-from m_irclib import Timer, Event
+from . import BaseModule
+from . import Stasher
+from .irclib import (nm_to_n, irc_lower, parse_channel_modes, is_channel,
+                     mask_matches)
+from .m_irclib import Timer, Event
+from .PermObjects import UPermCache
 
 class UserError(Exception): pass
 

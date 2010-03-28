@@ -1,7 +1,8 @@
 import os
 
-import Stasher
-from Settings import init_settings
+from . import Stasher
+from .Settings import init_settings
+
 class NoDefault: pass
 
 class BaseModule:

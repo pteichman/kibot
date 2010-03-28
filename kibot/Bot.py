@@ -6,18 +6,16 @@ import string
 import time
 import signal
 
-import timeoutsocket
-
-import logger
-import daemon
-import m_irclib
-
-import Options
-import BaseModule
-import ircDB
-import permDB
-import CommandHandler
-import ModuleManager
+from . import BaseModule
+from . import CommandHandler
+from . import ModuleManager
+from . import Options
+from . import daemon
+from . import ircDB
+from . import logger
+from . import m_irclib
+from . import permDB
+from . import timeoutsocket
 
 """
 handler priorities:
