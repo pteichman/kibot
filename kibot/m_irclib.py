@@ -108,7 +108,7 @@ class Timer(object):
     Returning otherwise will result in an exception and somewhat undefined
     behavior."""
 
-    def __init__(self, seconds, func, args=(), kwargs={},
+    def __init__(self, seconds, func, args=(), kwargs=None,
                  fromnow=1, repeat=None):
         """
         seconds   - when the function should be called (the first time)
@@ -122,6 +122,10 @@ class Timer(object):
                     be automatically removed.  If an integer, repeat at
                     that interval (in seconds)
         """
+
+        if kwargs is None:
+            kwargs = {}
+
         self.func = func
         self.args = args
         self.kwargs = kwargs
