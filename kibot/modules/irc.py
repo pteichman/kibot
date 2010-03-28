@@ -14,7 +14,8 @@ class irc(kibot.BaseModule.BaseModule):
         )
 
     def __init__(self, bot):
-        self.bot = bot
+        kibot.BaseModule.BaseModule.__init__(self, bot)
+
         self._set_handlers()
         self._ping_timer = Timer(60, self._ping_func, repeat=60) 
         self.bot.set_timer(self._ping_timer)
