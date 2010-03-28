@@ -106,7 +106,7 @@ def cleanup_old_lockfile(filename):
     if not os.path.exists(filename): return 1
     fo = file(filename)
     try: pid = int(fo.read())
-    except ValueError, e:
+    except ValueError:
         # bad pid
         return 0
     if sys.platform == 'linux2' and not os.path.exists('/proc/%i' % pid):
