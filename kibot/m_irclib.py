@@ -872,9 +872,9 @@ class Event(object):
     be sure to turn up logging (to at least level 5) and look at the events
     as they ocme in.
     """
-    def __init__(self, type, source, target, args,
+    def __init__(self, event_type, source, target, args,
                  raw='', conn=None, flags=None):
-        self._type = type
+        self._type = event_type
         self._source = source
         self._target = target
         if args: self._args = args
@@ -899,8 +899,7 @@ class Event(object):
     flags = property(_get_flags)
 
     def __str__(self):
-        format = "type: %s, source: %s, target: %s, args: %s%s"
+        format_str = "type: %s, source: %s, target: %s, args: %s%s"
         if self._flags: f = ", flags: %s" % self._flags
         else: f = ""
-        return format % (self._type, self._source, self._target, self._args, f)
-
+        return format_str % (self._type, self._source, self._target, self._args, f)
