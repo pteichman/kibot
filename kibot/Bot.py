@@ -157,7 +157,7 @@ class Bot:
     def set_handler(self, etype, function, priority=10):
         self.log(2, 'SET HANDLER (%s): %s' % (etype, function))
         self.ircobj.add_global_handler(etype, function, priority)
-    def del_handler(self, etype, function, priority=10):
+    def del_handler(self, etype, function):
         self.log(2, 'DEL HANDLER (%s): %s' % (etype, function))
         self.ircobj.remove_global_handler(etype, function)
     def set_timer(self, timer):

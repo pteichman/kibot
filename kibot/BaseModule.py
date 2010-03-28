@@ -120,8 +120,8 @@ class BaseModule:
         for h in handlers:
             self.bot.set_handler(h, getattr(self, prefix + h), priority)
 
-    def _del_handlers(self, priority=0, prefix="_on_"):
+    def _del_handlers(self, prefix="_on_"):
         """This "undoes" self._set_handlers"""
         handlers = self._get_handlers(prefix)
         for h in handlers:
-            self.bot.del_handler(h, getattr(self, prefix + h), priority)
+            self.bot.del_handler(h, getattr(self, prefix + h))

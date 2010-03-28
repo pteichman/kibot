@@ -300,9 +300,9 @@ class BaseLogger(BaseModule):
         self._set_handlers(prefix='_onhigh_', priority=101)
 
     def _del_all_handlers(self):
-        self._del_handlers(prefix='_onlow_',  priority=-10)
-        self._del_handlers(prefix='_on_',     priority=-1)
-        self._del_handlers(prefix='_onhigh_', priority=101)
+        self._del_handlers(prefix='_onlow_')
+        self._del_handlers(prefix='_on_')
+        self._del_handlers(prefix='_onhigh_')
 
     def _add_times(self, m):
         T = time.time()
