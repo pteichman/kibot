@@ -824,7 +824,7 @@ class Channel:
 
     def limit(self):
         if self.has_limit():
-            return self.modes[l]
+            return self.modes["l"]
         else:
             return None
 
