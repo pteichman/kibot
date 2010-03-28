@@ -2,9 +2,6 @@ import sys
 
 import kibot.Options
 from kibot.BaseModule import BaseModule
-from kibot.PermObjects import translate_cperm, CPerm
-# help policy:
-#   help (no args)   print help syntax, brief explanation, and
 
 mainhelp = """syntax: help <topic>
 <topic> can be either a module or a command.  \
