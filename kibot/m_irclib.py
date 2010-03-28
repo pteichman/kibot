@@ -826,14 +826,14 @@ class ServerConnection(irclib.ServerConnection):
         if not e.conn is self: return
         self.send_raw("WHOIS " + ','.join(e.args))
 
-    def whowas(self, nick, max="", server=""):
-        self._handle_event(Event('send_whowas', '', '', [nick, max, server],
+    def whowas(self, nick, count="", server=""):
+        self._handle_event(Event('send_whowas', '', '', [nick, count, server],
                                  conn=self))
     def _on_send_whowas(self, c, e):
         if not e.conn is self: return
-        max = cprefix(e.args[1], ' ')
+        count = cprefix(e.args[1], ' ')
         server = cprefix(e.args[2], ' ')
-        self.send_raw("WHOWAS %s%s%s" % (e.args[0], max, server))
+        self.send_raw("WHOWAS %s%s%s" % (e.args[0], count, server))
 
 class Event(object):
     """Event instances are used to represent irc events, and are what
