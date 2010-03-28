@@ -15,7 +15,7 @@ class UserPerm:
 
         self.misc = []
         while chunks:
-            misc.append(chunks.pop(0).split(','))
+            self.misc.append(chunks.pop(0).split(','))
 
 class UPermCache:
     def __init__(self, userperms):
