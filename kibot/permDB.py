@@ -16,7 +16,7 @@ class permDB(BaseModule.BaseModule):
     def __init__(self, bot):
         self.bot = bot
         self._load()
-        
+
     _stash_attrs = ['imply', 'grant', 'aliases',
                     'unknown_perms', 'default_perms']
     _stash_format = 'repr'
@@ -29,7 +29,7 @@ class permDB(BaseModule.BaseModule):
         self._unstash()
 
         self._expand()
-        
+
         ## get override perms
         override_file = self.bot.op.files.override_file
         tmpspace = {}
@@ -38,7 +38,7 @@ class permDB(BaseModule.BaseModule):
             self.override_perms = tmpspace['override']
         else:
             self.override_perms = {}
-    
+
     def _expand(self):
         self._imply = self._expand_tree(self.imply)
         self._grant = self._expand_tree(self.grant)
@@ -48,7 +48,7 @@ class permDB(BaseModule.BaseModule):
         for p in tree.keys():
             newtree[p] = self._recur_get_perm(p, tree)
         return newtree
-    
+
     def _recur_get_perm(self, perm, tree, pmap=None, depth=1):
         if pmap is None: pmap = {}
         try: l = tree[perm]
@@ -58,7 +58,7 @@ class permDB(BaseModule.BaseModule):
             if p == perm: continue
             self._recur_get_perm(p, tree, pmap, depth+1)
         return pmap
-    
+
     ##############################################################
     def expand_alias(self, command):
         try: return self.aliases[command]
@@ -68,14 +68,14 @@ class permDB(BaseModule.BaseModule):
         self._cached_unknown_perms = None
         self.unknown_perms = newperms
         self._stash()
-        
+
     def get_unknown_perms(self):
         up = getattr(self, '_cached_unknown_perms', None)
         if up is None:
             up = UPermCache(self.unknown_perms)
             self._cached_unknown_perms = up
         return up
-    
+
     def can_execute(self, command_name, obj, cperm, cmd):
         user = self.bot.ircdb.get_user(nickmask=cmd.nickmask)
         if user: uperms = user.get_perms()
@@ -91,7 +91,7 @@ class permDB(BaseModule.BaseModule):
                    'cmd':  cmd,
                    'user': user,
                    'userid': (user and user.userid)}
-        
+
         return cperm.check(uperms, context)
 
     def can_grant_perm(self, perm, userperms):
@@ -102,10 +102,10 @@ class permDB(BaseModule.BaseModule):
 
     def implies(self, perm):
         return self._imply.get(perm, {}).keys()
-    
+
     def grants(self, perm):
         return self._grant.get(perm, {}).keys()
-    
+
     def imply_depth(self, base_perm, implied_perm):
         try: return self._imply[base_perm][implied_perm]
         except KeyError, e: return None

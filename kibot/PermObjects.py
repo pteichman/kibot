@@ -12,7 +12,7 @@ class UserPerm:
             self.channels = cnunks.pop(0).split(',')
         else:
             self.channels = self.default_channel_list
-            
+
         self.misc = []
         while chunks:
             misc.append(chunks.pop(0).split(','))
@@ -25,25 +25,25 @@ class UPermCache:
             up = UserPerm(string_up)
             self.uperms[up.perm] = up
             self.upermlist.append(up.perm)
-            
+
     def __getitem__(self, key):
         if type(key) == type(''): return self.uperms[key]
         elif type(key) == type(0): return self.uperms[self.upermlist[key]]
         else: raise KeyError(key)
-        
+
     def __contains__(self, key):
         return self.uperms.has_key(key)
 
     def keys(self):
         return list(self.upermlist)
-    
+
     def get(self, key, notfound=None):
         try: return self.uperms[key]
         except KeyError: return notfound
-        
+
 class PermError(Exception):
     pass
-    
+
 class CPerm:
     def check_globlist(self, globlist, test):
         gl = list(globlist)
@@ -65,7 +65,7 @@ class CPerm:
         except PermError, e:
             ret = 0
         return ret
-            
+
 class cpNoPerm(CPerm):
     def check(self, userperms, context):
         return 1
@@ -77,7 +77,7 @@ class cpForbidden(CPerm):
         raise PermError('command is forbidden')
     def format(self, depth=0):
         return '(forbidden)'
-    
+
 class cpOr(CPerm):
     _format_join_pattern = ' OR '
 
@@ -106,7 +106,7 @@ class cpAnd(cpOr):
         for sub_perm in self.sub_perms:
             if not sub_perm.check(userperms, context): return 0
         return 1
-    
+
 class cpString(CPerm):
     def __init__(self, stringperm):
         try: stringperm, cond = stringperm.split(':', 1)
@@ -178,7 +178,7 @@ class cpString(CPerm):
             tmp['nick']    = context.get('nick')
             tmp['sargs']   = context.get('sargs', '')
             tmp['args']    = context.get('args', [])
-        
+
         if best_match:
             uperm = userperms[best_match]
             tmp['uperm']    = uperm.perm
@@ -236,4 +236,4 @@ def translate_cperm(cperm_obj):
         return cpForbidden()
     else:
         return cpForbidden()
-    
+

@@ -20,7 +20,7 @@ DESCRIPTION
   threshold 2, then all messages of priority 2, 1, 0, -1, etc will be
   logged, while those of priority 3, 4, etc. will not.  I suggest the
   following scale:
-  
+
      LOG PRIORITY    MEANING
               -1     failure - cannot be ignored
                0     important message - printed in default mode
@@ -61,7 +61,7 @@ BASIC OPTIONS
           return time.strftime('%m/%d/%y %H:%M:%S ',
                                time.localtime(time.time()))
       log.preprefix = printtime
-  
+
   file_object
 
     This is the file object to which output is directed.
@@ -124,7 +124,7 @@ COMMENTS
   I welcome comments, questions, bug reports and requests... I'm very
   lonely. :)
 """
- 
+
 AUTHOR  = "Michael D. Stenner <mstenner@phy.duke.edu>"
 VERSION = "0.4"
 DATE    = "2002/06/07"
@@ -164,7 +164,7 @@ class Logger:
 
       # a raw write call after the priority test, for writing arbitrary text
       log_obj.write(3, 'thing\nto\nwrite')  # (will not be followed by \n)
-      
+
       pr = log_obj.gen_prefix(3)  # generate the prefix used for priority 3
 
       # see the examples in the test section for more
@@ -218,7 +218,7 @@ class Logger:
         """
 
         return int(self.threshold) >= int(priority)
-        
+
     def gen_prefix(self, priority):
 
         """
@@ -229,7 +229,7 @@ class Logger:
         verbosity (non-numerical), then you should either give the
         chosen object a __int__ method, or override this function.
         """
-        
+
         if callable(self.preprefix): prefix = self.preprefix()
         else: prefix = self.preprefix
 
@@ -295,7 +295,7 @@ class LogContainer:
                 log_obj.log(p, m)
 
     __call__ = log
-    
+
     def write(self, priority, message=None):
         p, m = self._use_default(priority, message)
         for log_obj in self.logger_list:
@@ -332,7 +332,7 @@ class LogContainer:
           container.test = container.test_limit_priority
         """
         return priority <= threshold
-    
+
     def test_limit_threshold(self, priority, message, threshold, log_obj):
         """Only pass on messages to log objects whose threshold is
         (numerically) lower than the master threshold.
@@ -341,7 +341,7 @@ class LogContainer:
           container.test = container.test_limit_threshold
         """
         return log_obj.threshold <= threshold
-    
+
 if __name__ == '__main__':
     ###### TESTING AND DEMONSTRATION
 
@@ -360,13 +360,13 @@ if __name__ == '__main__':
 
     print " and log a few more things"
     for i in range(-2, 10): log(i, 'log priority %s' % (i))
- 
+
     print "\n now create another with a different prefix and priority..."
     print " and put them in a container..."
     log2 = Logger(threshold-2, preprefix = 'LOG2 ')
     cont = LogContainer([log, log2], threshold=0)
     cont.test = cont.test_limit_priority
-    
+
     print " and log a bit more"
     for i in range(-2, 10): cont(i, 'log priority %s' % (i))
 
@@ -384,7 +384,7 @@ if __name__ == '__main__':
     print "\n two trailing newlines"
     log(stuff + '\n\n') # should create a "blank" line.  If you use two
                         # newlines, it knows you really wanted one :)
-    
+
     print "\n log JUST a newline"
     log('\n') # should create only a single "blank" line
 

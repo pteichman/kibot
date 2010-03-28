@@ -92,7 +92,7 @@ class Setting:
                 new_value = self.conv_func(new_value)
             except Exception, e:
                 raise SettingError('conversion error (%s)' % e)
-            
+
         try:
             if self.set_func is None:
                 setattr(module, self.name, new_value)
@@ -106,7 +106,7 @@ class Setting:
                 self.update_func(module, self.name)
         except Exception, e:
             raise SettingError('update error (%s)' % e)
-        
+
     def get(self, module):
         if self.get_func is None:
             val = getattr(module, self.name)

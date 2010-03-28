@@ -38,7 +38,7 @@ class IRC(irclib.IRC):
     def server(self):
         # overridden so it uses MY ServerConnection object :)
         """Creates and returns a ServerConnection object."""
-        
+
         c = ServerConnection(self)
         self.connections.append(c)
         return c
@@ -57,7 +57,7 @@ class IRC(irclib.IRC):
                   % repr(timer)
         if timer in self.delayed_commands:
             self.delayed_commands.remove(timer)
-            
+
     def process_timeout(self):
         t = time.time()
         dc  = self.delayed_commands
@@ -130,7 +130,7 @@ class Timer(object):
         self.args = args
         self.kwargs = kwargs
         self.repeat = repeat
-        
+
         if fromnow: self.time = time.time() + seconds
         else: self.time = seconds
 
@@ -161,7 +161,7 @@ class Timer(object):
 
 
 class DirectConnectionMaster(irclib.Connection):
-    
+
     """Listens for connections on a socket, and then feeds them
     directly to the bot.  You need one Master, which then creates a
     DirectConnection instance for each incoming connection.
@@ -175,7 +175,7 @@ class DirectConnectionMaster(irclib.Connection):
         else:
             self.socktype = 'unix'
         self.conn_id = 1
-        
+
     def connect(self):
         if self.socktype == 'inet':
             self.master = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -197,7 +197,7 @@ class DirectConnectionMaster(irclib.Connection):
             self.irclibob.connections.remove(self)
         if self.socktype == 'unix' and os.path.exists(self.listen):
             os.unlink(self.listen)
-        
+
     def process_data(self):
         """called when the master socket is readable, which means that
         someone is connecting to it"""
@@ -209,7 +209,7 @@ class DirectConnectionMaster(irclib.Connection):
         self.conn_id += 1
         self.irclibob.connections.append(dc)
         dc.connect()
-        
+
     def _get_socket(self):
         return self.master
 
@@ -222,7 +222,7 @@ class DirectConnection(irclib.Connection):
         self.socket = sock
         self.conn_id = conn_id
         self.previous_buffer = ''
-        
+
     def connect(self):
         pass
 
@@ -263,7 +263,7 @@ class DirectConnection(irclib.Connection):
             else:
                 e = Event('privmsg', nm, '', [line], line)
             self.irclibob._handle_event(self, e)
-            
+
     def _get_socket(self):
         return self.socket
 
@@ -313,7 +313,7 @@ class ServerConnection(irclib.ServerConnection):
         self.connected = 1
         if self.irclibobj.fn_to_add_socket:
             self.irclibobj.fn_to_add_socket(self.socket)
-            
+
         if log_in: self.log_in()
         return self
 
@@ -882,7 +882,7 @@ class Event(object):
         self._raw = raw
         self._conn = conn
         self._flags = flags or {}
-        
+
     def _get_type(self): return self._type
     type = property(_get_type)
     def _get_source(self): return self._source
@@ -897,7 +897,7 @@ class Event(object):
     conn = property(_get_conn)
     def _get_flags(self): return self._flags
     flags = property(_get_flags)
-    
+
     def __str__(self):
         format = "type: %s, source: %s, target: %s, args: %s%s"
         if self._flags: f = ", flags: %s" % self._flags

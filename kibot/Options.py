@@ -75,7 +75,7 @@ def printhelp(o):
     print
     print "Usage: %s [options]" % __package__
     print o.help(width=24),
-    
+
 def munge_options(f):
     # normalize the path, because the pwd may change
     bdir = f.files.base_dir = os.path.abspath(f.files.base_dir)
@@ -91,7 +91,7 @@ def munge_options(f):
         f.admin.dc_addr   = join(bdir, f.admin.dc_addr)
     else:
         f.admin.dc_addr = port
-        
+
     try:
         orig = f.admin.umask
         f.admin.umask = int(orig, 8)
@@ -129,13 +129,13 @@ def _options(cmd_line):
         sys.stderr.write('ERROR: unknown arguments: %s\n' \
                          % ' '.join(command_line._args))
         sys.exit(1)
-        
+
     tmp = o.overlay([defaults, command_line])
     if DEBUG: print 'TMP\n%s' % tmp
     if tmp.help:
         printhelp(o)
         sys.exit(0)
-    
+
     config_file = os.path.join(tmp.files.base_dir, tmp.files.conf_file)
     if DEBUG: print 'CONFIG FILE: %s\n' % config_file
     file_ops = o.load_ConfigParser(config_file, include_unknown=cp_callback)
@@ -144,7 +144,7 @@ def _options(cmd_line):
     if DEBUG: print 'COLLAPSED VALUES\n%s' % final
     munge_options(final)
     if DEBUG: print 'MUNGED VALUES\n%s' % final
-    
+
     return final
 
 def cp_callback(name, value):

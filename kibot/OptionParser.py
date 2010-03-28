@@ -23,7 +23,7 @@ class baseOption:
         elif cp_name == (): self.cp_name = self._split_cp_name(name)
         else: self.cp_name = self._split_name(cp_name)
         self.desc = desc
-    
+
     def overlay(self, lower, upper):
         return upper
 
@@ -92,9 +92,9 @@ class listOption(baseOption):
             if i == 'PREV': new.extend(lower)
             else: new.append(i)
         return new
-    
+
 ########################################################################
-    
+
 class OptionParser:
     _otypes = {
         'bool': boolOption,
@@ -109,7 +109,7 @@ class OptionParser:
 
     def help(self, width=20):
         form1 = '  %-' + str(width) + 's  %s\n'
-        form2 = '  %s\n' + ' '*(2 + width + 2) + '%s\n' 
+        form2 = '  %s\n' + ' '*(2 + width + 2) + '%s\n'
         hp = []
         for op in self._oplist:
             ol = []
@@ -148,7 +148,7 @@ class OptionParser:
             st = st + '[%s]\n' % s
             st = st + ''.join(sections[s]) + '\n'
         return st
-    
+
     def add(self, otype, *args, **kwargs):
         klass = self._otypes[otype]
         self._oplist.append(klass(*args, **kwargs))
@@ -159,7 +159,7 @@ class OptionParser:
             if not op.default is NoDefault:
                 oc.set(op.name, op.default)
         return oc
-    
+
     def load_getopt(self, cmd_line):
         oc = OptionContainer()
         # build the options lists for getopt
@@ -216,7 +216,7 @@ class OptionParser:
         for op in self._oplist:
             if op.cp_name:
                 opmap[op.cp_name] = op
-                
+
         # a missing config file is OK, but an unreadable one is not
         if os.path.exists(filename) and not os.access(filename, os.R_OK):
             raise OptionError('cannot read config file: %s' % filename)
@@ -257,7 +257,7 @@ class OptionParser:
         for oc in oc_list:
             self._overlay(new, oc, keep_unknown=keep_unknown)
         return new
-    
+
     def _overlay(self, lower, upper, keep_unknown):
         opmap = {}
         for op in self._oplist:
@@ -297,7 +297,7 @@ class OptionContainer:
         while n:
             obj = getattr(obj, n.pop(0), default)
         return obj
-    
+
     def options_list(self):
         li = []
         for k, v in self.__dict__.items():
@@ -307,7 +307,7 @@ class OptionContainer:
             else:
                 li.append( ((k, ), v) )
         return li
-    
+
     def __repr__(self):
         return self._pprint()
 
@@ -320,7 +320,7 @@ class OptionContainer:
                 buf = buf + '%-25s = %s\n' % ( prefix + '.' + k, repr(v) )
         return buf
 
-    
+
 if __name__ == '__main__':
     import sys
     DEBUG = 0

@@ -134,7 +134,7 @@ def kill_bot(pid):
             dblog('sending SIGKILL')
             os.kill(pid, signal.SIGKILL)
             break
-        
+
 def _get_pid(pidfile):
     try: fo = open(pidfile)
     except IOError, e:
@@ -162,7 +162,7 @@ def dc_connect(dc_addr):
             host, port = dc_addr.split(':', 1)
         else:
             port = dc_addr
-                
+
         try:
             port = int(port)
         except ValueError, e:
@@ -174,7 +174,7 @@ def dc_connect(dc_addr):
             lastslash = host.rindex('/')
             host = host[lastslash+1:]
             addr = '%s:%s' % (host, port)
-            
+
         if ctype == 'unix': tn = UNIXTelnet()
         else:               tn = telnetlib.Telnet()
 

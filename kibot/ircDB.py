@@ -41,7 +41,7 @@ class ircDB(BaseModule.BaseModule):
         self.channels = IRCdict()  # channel name -> Channel instance
         self.users = IRCdict()     # nick         -> CurrentUser instance
         #                          # userid -> KnownUser instance
-        
+
         ################################################################
         ## These next two lines are here for the mbot->kibot transition
         ## so that the ircdb file can be imported correctly
@@ -69,7 +69,7 @@ class ircDB(BaseModule.BaseModule):
         self.bot.tmp[self._tmp_key] = pickle.dumps(data)
         self._del_handlers()
         self.save()
-        
+
     def _reload(self):
         data = pickle.loads(self.bot.tmp[self._tmp_key])
         del self.bot.tmp[self._tmp_key]
@@ -78,7 +78,7 @@ class ircDB(BaseModule.BaseModule):
     def save(self):
         self.known.sync()
         self.ircdata.sync()
-        
+
     ######################################################################
 
     # all of the functions in the next block effectively have these args:
@@ -87,7 +87,7 @@ class ircDB(BaseModule.BaseModule):
         nick, nickmask, userid, user = self._fetch_all(*args, **kwargs)
         if not nick: return None
         else: return nick
-        
+
     def get_nickmask(self, *args, **kwargs):
         nick, nickmask, userid, user = self._fetch_all(*args, **kwargs)
         if not nick: None
@@ -104,7 +104,7 @@ class ircDB(BaseModule.BaseModule):
             return [nick]
         else:
             return []
-        
+
     def get_nickmasks(self, *args, **kwargs):
         nick, nickmask, userid, user = self._fetch_all(*args, **kwargs)
         if userid:
@@ -164,7 +164,7 @@ class ircDB(BaseModule.BaseModule):
             masks = []
         else:
             masks = [ mask ]
-        
+
         ku = KnownUser(userid, masks=masks)
         self.known[userid] = ku
         self.users[nick].userid = userid
@@ -263,7 +263,7 @@ class ircDB(BaseModule.BaseModule):
         #print '_fetch_all', nick, nickmask, userid, user
         god = self._is_god_user(nick, nickmask, userid, user)
         if god: return god
-        
+
         if not nick is None:
             cu = self.users.get(nick)
             if cu is None:
@@ -274,7 +274,7 @@ class ircDB(BaseModule.BaseModule):
 
         elif not nickmask is None:
             nick = nm_to_n(nickmask)
-            
+
             # first see if it's cached (if we're on a common channel)
             cu = self.users.get(nick)
             if not cu is None:
@@ -299,7 +299,7 @@ class ircDB(BaseModule.BaseModule):
                 if cu.userid == userid:
                     return (nick, cu.nickmask, userid, user)
             return (None, None, userid, user)
-        
+
         else:
             return (None, None, None, None)
 
@@ -317,7 +317,7 @@ class ircDB(BaseModule.BaseModule):
             return (nick, nickmask, userid, user)
         else:
             return( () )
-        
+
     def _rename_user(self, before, after):
         self.users[after] = self.users[before]
         if not irc_lower(before) == irc_lower(after): # tricky bastards
@@ -358,7 +358,7 @@ class ircDB(BaseModule.BaseModule):
             c.mode(ch, '') # query channel modes
 
         self.channels[ch].add_user(nick)
-        
+
         cu = self.users.get(nick)
         if cu:
             cu.channels.append(ch)
@@ -380,7 +380,7 @@ class ircDB(BaseModule.BaseModule):
         for action, mode, value in modes:
             if action == "+": channel.set_mode(mode, value)
             else:             channel.clear_mode(mode, value)
-        
+
     def _on_whoreply(self, c, e):
         a = e.args
         ch       = a[0]
@@ -399,7 +399,7 @@ class ircDB(BaseModule.BaseModule):
                 pass
 
         self.channels[ch].add_user(nick)
-        
+
         cu = self.users.get(nick)
         if cu:
             cu.add_channel(ch)
@@ -424,7 +424,7 @@ class ircDB(BaseModule.BaseModule):
         else:
             self.channels[ch].remove_user(nick)
         self.users[nick].remove_channel(ch)
-            
+
     def _on_mode(self, c, e):
         """[Internal]"""
         modes = parse_channel_modes(string.join(e.args))
@@ -476,7 +476,7 @@ class ircDB(BaseModule.BaseModule):
     def _on_nicknameinuse(self, c, e):
         attempted_nick = e.args[0]
         self._set_nick_return(attempted_nick, 0)
-        
+
     def _on_part(self, c, e):
         """[Internal]"""
         nick = nm_to_n(e.source)
@@ -491,14 +491,14 @@ class ircDB(BaseModule.BaseModule):
         self.users[nick].remove_channel(ch)
         if not self.users[nick].channels:
             del self.users[nick]
-            
+
     def _on_quit(self, c, e):
         """[Internal]"""
         nick = nm_to_n(e.source)
         for channel in self.channels.values():
             channel.remove_user(nick)
         del self.users[nick]
-        
+
     def _on_disconnect(self, c, e):
         """[Internal]"""
         self.channels = IRCdict()
@@ -564,7 +564,7 @@ class CurrentUser:
         if channel in self.channels: self.channels.remove(channel)
     def rename(self, before, after):
         self.nickmask = after + self.nickmask[len(before):]
-        
+
 class KnownUser:
     def __init__(self, userid, perms=None, masks=None, password=None):
         self.userid = userid
@@ -600,7 +600,7 @@ class KnownUser:
         r = r + "          masks=%s,\n" % repr(self.masks)
         r = r + "          password=%s)" % repr(self.password)
         return r
-    
+
     #########################################################
     # mask functions
     def mask_matches(self, nickmask):
@@ -620,7 +620,7 @@ class KnownUser:
                 self.masks.remove(mask)
         except (IndexError, ValueError), msg:
             pass
-        
+
     def get_masks(self):
         return list(self.masks)
 
@@ -642,7 +642,7 @@ class KnownUser:
         if getattr(self, 'cached_perms', None) is None:
             self.cached_perms = UPermCache(self.perms)
         return self.cached_perms
-    
+
     def get_raw_perms(self):
         return list(self.perms)
 

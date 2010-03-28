@@ -39,7 +39,7 @@ class FloodProtector:
         self.start = time.time()
         self.debug = debug
         self.timer = 0.0
-        
+
     def check(self, message):
         if not self.messages.match(message): return 0, 'unprotected message'
         now = time.time()
@@ -64,4 +64,4 @@ if __name__ == '__main__':
         #s = raw_input()
         fp.check('PRIVMSG ')
 
-        
+

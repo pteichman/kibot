@@ -15,7 +15,7 @@ class CommandHandler(BaseModule.BaseModule):
     def __init__(self, bot):
         self.bot = bot
         self._set_handlers(20)
-        
+
     def _unload(self):
         self._del_handlers()
 
@@ -68,7 +68,7 @@ class CommandHandler(BaseModule.BaseModule):
         """called by the pubmsg and privmsg handlers
         creates the reply object and command object, and passes
         it on to _run()"""
-        
+
         self.bot.log(3, 'COMMAND: %s, %s, %s' % (nm, channel, command))
         if isinstance(connection, DirectConnection):
             #nick = '!'+nm # the '!' marks it as direct - it's hard to
@@ -91,19 +91,19 @@ class CommandHandler(BaseModule.BaseModule):
     def _run(self, cmd):
         """check permissions, look up function, and throw either a
         command_not_found, permission_denied, or command event"""
-        
-        
+
+
         if self._check_ignore(cmd): return
-        
+
         command_name = self.bot.permdb.expand_alias(cmd.cmd)
         obj, cperm = self.bot.mod.find_object(command_name)
-        
+
         if obj is None or not callable(obj):
             event = Event('command_not_found', cmd.nick, cmd.cmd,
                           [cmd.args], cmd)
             self.bot.handle_event(cmd.connection, event)
             return
-        
+
         try:
             can_execute = self.bot.permdb.can_execute(command_name, obj,
                                                       cperm, cmd)
@@ -141,7 +141,7 @@ class CommandHandler(BaseModule.BaseModule):
 
     #############################################################
     # helper functions (uninteresting)
-    
+
     def _cmd_split(self, command):
         """split a command line into command and args
         args is a single string"""
@@ -151,7 +151,7 @@ class CommandHandler(BaseModule.BaseModule):
         if cmd_list: args = string.strip(cmd_list[0])
         else: args = ''
         return cmd, args
-        
+
 
 
 class ReplyObject:
@@ -183,7 +183,7 @@ class ReplyObject:
             target = arg_list[0]
             message = string.join(map(str, arg_list[1:]), ' ')
         return(target, message)
-        
+
 class IRCReply(ReplyObject):
     """This is the class for IRC replies to commands.  Every Command
     object has a reply object.  The public methods of this class will
@@ -213,13 +213,13 @@ class IRCReply(ReplyObject):
         target, message = self._get_target_and_message(args)
         if is_channel(target): message = '%s: %s' % (self.nick, message)
         self.connection.privmsg(target, message)
-        
+
     def nnotice(self, *args):
         """same as nreply, but with notice instead of privmsg"""
         target, message = self._get_target_and_message(args)
         if is_channel(target): message = '%s: %s' % (self.nick, message)
         self.connection.notice(target, message)
-        
+
     def msg(self, *args):
         """will _always_ respond privately, even if the command was in
         a channel"""
@@ -233,7 +233,7 @@ class NoReply(ReplyObject):
     """This class is for those times when you want to suppress any return
     communication from the bot. It behaves just like IRCReply, but doesn't
     do anything, except log what an IRCReply would have done.
-    
+
     Needs to be inited with nick, channel and connection as normal.
     You also need bot=bot object if you want to log the actions.
     """
@@ -266,7 +266,7 @@ class NoReply(ReplyObject):
             message = '%s: %s' % (self.nick, message)
         if hasattr(self, "bot"):
             self.bot.log(7, "NoReply.nreply: %s: %s" % (target, message))
-        
+
     def nnotice(self, *args):
         """same as nreply, but with notice instead of privmsg"""
         target, message = self._get_target_and_message(args)
@@ -274,7 +274,7 @@ class NoReply(ReplyObject):
             message = '%s: %s' % (self.nick, message)
         if hasattr(self, "bot"):
             self.bot.log(7, "NoReply.nnotice: %s: %s" % (target, message))
-        
+
     def msg(self, *args):
         """will _always_ respond privately, even if the command was in
         a channel"""
@@ -290,7 +290,7 @@ class DirectConnectionReply(ReplyObject):
     """This is the class for DirectConnection replies.  These basically
     all do the same thing (write to the direct connection), but with
     different prefixes so you can see which method as called."""
-    
+
     def privmsg(self, *args):
         target, message = self._get_target_and_message(args)
         self.connection.write('PRIVMSG(%s): %s\n' % (target, message))
@@ -308,7 +308,7 @@ class DirectConnectionReply(ReplyObject):
         self.connection.write('MSG: %s\n' % str(args))
     def pnotice(self, *args):
         self.connection.write('PNOTICE: %s\n' % str(args))
-        
+
 class Command:
     """An instance of this class will be created for each command, and
     will be passed to every command function.  Creation is automatic
@@ -345,10 +345,10 @@ class Command:
 
         for meth in 'privmsg reply notice nnotice nreply msg pnotice'.split():
             setattr(self, meth, getattr(self._reply_object, meth))
-            
+
     def __str__(self):
         return "%s, %s, %s %s" % (self.nick, self.channel, self.cmd, self.args)
-    
+
     def asplit(self, maxsplit=-1):
         """split the arguments string on whitespace"""
         return string.split(self.args, None, maxsplit)

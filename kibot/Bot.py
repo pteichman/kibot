@@ -48,14 +48,14 @@ class Bot:
         self.setup_connections()
         self.load_core_modules()
         self.set_signal_handlers()
-        
+
         try: self.connect()
         except irclib.ServerConnectionError, msg:
             self.log(0, "FATAL: Couldn't connect to server: '%s:%i'" % \
                      (self.op.irc.server, self.op.irc.port))
             self.log(0, "       " + str(msg))
             sys.exit(1)
-            
+
         try:
             self.ircobj.process_forever()
         except KeyboardInterrupt, msg:
@@ -142,7 +142,7 @@ class Bot:
         password = self.op.irc.password
         username = self.op.irc.username
         ircname  = self.op.irc.ircname
-        
+
         self.nick = nick
         self.hostname = None # will be filled in by ircdb - whoreply
         self.hostip   = None # (same)
@@ -153,7 +153,7 @@ class Bot:
         self.conn.user(username, self.conn.localhost, server, ircname)
         self.ircdb.set_nick(-1)
         return self.conn.connected
-            
+
     def set_handler(self, etype, function, priority=10):
         self.log(2, 'SET HANDLER (%s): %s' % (etype, function))
         self.ircobj.add_global_handler(etype, function, priority)
@@ -220,7 +220,7 @@ class Bot:
             else: fo = open(filename, 'a', 1)
             loggers.append(logger.Logger(threshold=level, file_object=fo))
         m_irclib.log = self.log = logger.LogContainer(loggers)
-        
+
         self.log(1, 'Reloaded config at: %s' % (time.asctime(), ))
         self.log.write(5, 'CONFIG:\n%s' % self.op)
 
@@ -242,7 +242,7 @@ class Bot:
 
     def _sighup_handler(self, signal_number, frame):
         self.set_timer(m_irclib.Timer(0, self.reload_config))
-        
+
 if __name__ == '__main__':
     bot = Bot()
-    
+

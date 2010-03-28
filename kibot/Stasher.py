@@ -24,11 +24,11 @@ class BaseStasher:
         self._checkvalues = checkvalues
 
         self._numbackups = numbackups
-        
+
         self.dict = {}
 
         self.open()
-        
+
     def __repr__(self):
         st = '{\n'
         for k in self.keys():
@@ -38,7 +38,7 @@ class BaseStasher:
 
     def _load(self):
         pass
-    
+
     #################################
 
     def update(self, dict):
@@ -77,7 +77,7 @@ class BaseStasher:
             b = '%s.%i' % (self.file, i+1)
             if os.path.exists(a): os.rename(a, b)
         shutil.copyfile(self.file, first)
-                
+
     def _differ(self, file1, file2):
         ## OK, this could be MUCH smarter
         f1 = open(file1)
@@ -94,10 +94,10 @@ class BaseStasher:
         f1.close()
         f2.close()
         return ret
-    
+
     def close(self):
         pass
-        
+
     def sync(self):
         pass
 
@@ -111,7 +111,7 @@ class BaseStasher:
         except:
             self._readonly = 1
             raise
-        
+
     _key_re = re.compile(r'^[a-zA-Z_][a-zA-Z_0-9]*$')
     def _check_key(self, key):
         if not self._key_re.match(key):
@@ -144,7 +144,7 @@ class BaseStasher:
         if self._checkvalues: self._check_value(value)
         self.dict[key] = value
         if self._autosync: self.sync()
-        
+
     def __delitem__(self, key):
         if self._readonly:
             raise StasherError, "stasher is read-only"
@@ -160,11 +160,11 @@ class ShelveStasher(BaseStasher):
             self.dict = shelve.open(self.file, 'r')
         else:
             self.dict = shelve.open(self.file)
-        
+
     def close(self):
         try: self.dict.close()
         except AttributeError: pass
-        
+
     def sync(self):
         self.dict.sync()
 
@@ -185,14 +185,14 @@ class PickleStasher(BaseStasher):
             fo = open(self.file, 'wb')
             cPickle.dump(self.dict, fo, 1)
             fo.close()
-        
+
 class ReprStasher(BaseStasher):
     def _load(self):
         self.dict = {}
         if os.path.exists(self.file):
             execfile(self.file, self.dict)
             del self.dict['__builtins__']
-            
+
     def close(self):
         self.sync()
 
@@ -230,7 +230,7 @@ def test():
         for k, v in dict.items():
             st[k] = v
         st.close()
-        
+
         st.open()
         for k in st.keys():
             print k, st[k]
