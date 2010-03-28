@@ -8,8 +8,8 @@ from .OptionParser import OptionParser, OptionError
 DEBUG = 0
 DEF_BOTMOD_PATH = ['modules']
 DEF_PYMOD_PATH  = ['pymod']
-__package__ = 'kibot'
-__url__     = 'http://wiki.github.com/pteichman/kibot/'
+_PACKAGE = 'kibot'
+_URL     = 'http://wiki.github.com/pteichman/kibot/'
 
 def fill_options(o):
     #     type      name                short long default
@@ -70,10 +70,10 @@ def fill_options(o):
     return o
 
 def printhelp(o):
-    print "%s -- a modular python-based IRC bot" % __package__
-    print "  %s" % __url__
+    print "%s -- a modular python-based IRC bot" % _PACKAGE
+    print "  %s" % _URL
     print
-    print "Usage: %s [options]" % __package__
+    print "Usage: %s [options]" % _PACKAGE
     print o.help(width=24),
 
 def munge_options(f):

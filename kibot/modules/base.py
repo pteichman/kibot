@@ -12,7 +12,7 @@ Typing "help modules" provides a list of loaded modules.
 You may also find "help help" useful.
 Help using the standard module (with a little more detail) \
 can be found online at: %shelp/""" \
-   % kibot.Options.__url__
+   % kibot.Options._URL
 
 
 class base(BaseModule):
@@ -38,9 +38,8 @@ class base(BaseModule):
     def about(self, cmd):
         """give basic bot information
         about"""
-        cmd.reply('kibot v%s (%s) - %s' % (kibot.Options.__version__,
-                                           kibot.Options.__date__,
-                                           kibot.Options.__url__))
+        cmd.reply('kibot v%s - %s' % (kibot.Options.__version__,
+                                      kibot.Options._URL))
 
     ##################################################################
     # help functions
