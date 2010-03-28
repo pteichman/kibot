@@ -641,7 +641,7 @@ class ServerConnection(irclib.ServerConnection):
         self._handle_event(Event('send_names', '', '', [channels], conn=self))
     def _on_send_names(self, c, e):
         if not e.conn is self: return
-        c = e.args and (' ' + ','.join(channels)) or ''
+        c = e.args[0] and (' ' + ','.join(e.args[0])) or ''
         self.send_raw("NAMES" + c)
 
     def nick(self, newnick):
