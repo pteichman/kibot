@@ -109,7 +109,7 @@ class ircDB(BaseModule.BaseModule):
         if userid:
             nickmasks = []
             for cnick, cu in self.users.items():
-                if cu.userid == userid: nicks.append(cu.nickmask)
+                if cu.userid == userid: nickmasks.append(cu.nickmask)
             return nickmasks
         elif nickmask:
             return [nickmask]
