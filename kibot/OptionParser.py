@@ -12,11 +12,11 @@ class NoDefault: pass
 class NoValue: pass
 
 class baseOption:
-    def __init__(self, name, short=None, long=None, default=NoDefault, \
+    def __init__(self, name, shortopt=None, longopt=None, default=NoDefault, \
         cp_name=(), desc=None):
         self.name = self._split_name(name)
-        self.short = short
-        self.long = long
+        self.short = shortopt
+        self.long = longopt
         self.default = default
         if cp_name is None: self.cp_name = None
         elif cp_name == (): self.cp_name = self._split_cp_name(name)
@@ -163,7 +163,7 @@ class OptionParser:
         oc = OptionContainer()
         # build the options lists for getopt
         short = ''
-        long = []
+        longopt = []
         opmap = {}
         for op in self._oplist:
             if op.short:
@@ -174,12 +174,12 @@ class OptionParser:
             if op.long:
                 a = ''
                 if op.getopt_takes_arg: a = '='
-                long.append(op.long + a)
+                longopt.append(op.long + a)
                 opmap['--' + op.long] = op
 
         if DEBUG:
-            print 'DEBUG: getopt(%s, %s, %s)' % (`cmd_line`, `short`, `long`)
-        try: cl_ops, args = getopt.getopt(cmd_line, short, long)
+            print 'DEBUG: getopt(%s, %s, %s)' % (`cmd_line`, `short`, `longopt`)
+        try: cl_ops, args = getopt.getopt(cmd_line, short, longopt)
         except getopt.GetoptError, msg: raise OptionError(str(msg))
         oc._args = args
         for cl_op, val in cl_ops:
