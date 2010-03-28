@@ -28,7 +28,8 @@ class base(BaseModule):
         )
 
     def __init__(self, bot):
-        self.bot = bot
+        BaseModule.__init__(self, bot)
+
         self._mainhelp = mainhelp
         
     _about_cperm = 1
