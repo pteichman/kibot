@@ -161,9 +161,9 @@ def options(cmd_line):
 if __name__ == '__main__':
     import sys
     if sys.argv[1:] == ['conf']:
-        o = OptionParser()
-        o = fill_options(o)
-        m = \
+        _o = OptionParser()
+        _o = fill_options(_o)
+        _m = \
           "# These values are the built-in defaults.  Using these values\n" \
           "# in a config file is exactly the same as using no config file\n" \
           "# at all.  This is provided so that you can see:\n" \
@@ -171,8 +171,8 @@ if __name__ == '__main__':
           '#  b) what the defaults are (again, see "man kibot")\n' \
           '#  c) how to use them\n' \
           '\n'
-        sys.stdout.write(m)
-        sys.stdout.write(o.sample_file())
+        sys.stdout.write(_m)
+        sys.stdout.write(_o.sample_file())
         sys.exit(0)
     DEBUG = 1
     options(sys.argv[1:])
