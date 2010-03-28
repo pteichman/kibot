@@ -159,7 +159,6 @@ def options(cmd_line):
         sys.exit('ERROR: %s\n' % msg)
 
 if __name__ == '__main__':
-    import sys
     if sys.argv[1:] == ['conf']:
         _o = OptionParser()
         _o = fill_options(_o)
