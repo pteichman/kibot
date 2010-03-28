@@ -45,7 +45,7 @@ class BaseModule:
             filename = getattr(self, '_stash_file', def_stash_basename)
         stash_file = os.path.join(self.bot.op.files.data_dir, filename)
         return Stasher.get_stasher(stash_file, stash_format, **kwargs)
-            
+
     def _stash(self, default=NoDefault):
         """Store the attributes listed in self._stash_attrs in a stasher.
         One will be created if necessary.  If a value isn't set and
@@ -59,7 +59,7 @@ class BaseModule:
                     self._stasher[attr] = default
             else: self._stasher[attr] = value
         self._stasher.sync()
-        
+
     def _unstash(self, default=NoDefault):
         """Reload the attributes listed in self._stash_attrs from the
         stasher.  If the attribute was not in the stasher (or if the file
@@ -77,7 +77,7 @@ class BaseModule:
             else:
                 value = self._stasher.get(attr, default)
                 setattr(self, attr, value)
-        
+
     ##################################################################3
     # handlers
     def _get_handlers(self, prefix):
@@ -125,5 +125,3 @@ class BaseModule:
         handlers = self._get_handlers(prefix)
         for h in handlers:
             self.bot.del_handler(h, getattr(self, prefix + h), priority)
-            
-            
