@@ -9,7 +9,7 @@ class UserPerm:
         self.perm = chunks.pop(0)
 
         if chunks:
-            self.channels = cnunks.pop(0).split(',')
+            self.channels = chunks.pop(0).split(',')
         else:
             self.channels = self.default_channel_list
 
