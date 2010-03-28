@@ -89,7 +89,7 @@ class ircDB(BaseModule.BaseModule):
 
     def get_nickmask(self, *args, **kwargs):
         nick, nickmask, userid, user = self._fetch_all(*args, **kwargs)
-        if not nick: None
+        if not nick: return None
         else: return self.users[nick].nickmask
 
     def get_nicks(self, *args, **kwargs):
