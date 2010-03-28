@@ -88,11 +88,11 @@ class IRC(irclib.IRC):
             try:
                 ret = handler[1](connection, event)
                 if ret == "NO MORE": raise StopHandlingEvent()
-            except StopHandlingEvent, msg:
+            except StopHandlingEvent:
                 return
             except SystemExit:
                 raise
-            except Exception, msg:
+            except Exception:
                 lexc = traceback.format_exception(sys.exc_type, sys.exc_value,
                                                   sys.exc_traceback)
                 exc = ' '.join(lexc)
@@ -142,7 +142,7 @@ class Timer(object):
             ret = apply(self.func, self.args, self.kwargs)
         except SystemExit:
             raise
-        except Exception, msg:
+        except Exception:
             exc = traceback.format_exception(sys.exc_type, sys.exc_value,
                                              sys.exc_traceback)
             log(0, "Timer raised exception:\n%s" % ''.join(exc))
@@ -236,7 +236,7 @@ class DirectConnection(irclib.Connection):
     def process_data(self):
         try:
             new_data = self.socket.recv(2**14)
-        except socket.error, x:
+        except socket.error:
             # The server hung up.
             self.close()
             return
@@ -330,7 +330,7 @@ class ServerConnection(irclib.ServerConnection):
 
         try:
             new_data = self.socket.recv(2**14)
-        except socket.error, x:
+        except socket.error:
             # The server hung up.
             self.disconnect("Connection reset by peer")
             return
@@ -501,7 +501,7 @@ class ServerConnection(irclib.ServerConnection):
         try:
             log(7, "TO SERVER: " + string)
             self.socket.send(string + "\r\n")
-        except socket.error, x:
+        except socket.error:
             # Aouch!
             self.disconnect("Connection reset by peer.")
 
