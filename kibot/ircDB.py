@@ -694,7 +694,7 @@ class IRCdict(dict):
 
     def clear(self):
         dict.clear(self)
-        self.keymay.clear()
+        self.keymap.clear()
 
     def has_key(self, key):
         return self.keymap.has_key(irc_lower(key))
