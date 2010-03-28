@@ -217,7 +217,7 @@ class ircDB(BaseModule.BaseModule):
 
             if newnick == -1:
                 try: n = self.ircdata['nick']
-                except KeyError, e: n = None
+                except KeyError: n = None
                 if n is None or n == confnick[0] or \
                    self.bot.op.admin.forget:
                     newnick = 0

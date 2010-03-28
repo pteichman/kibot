@@ -62,7 +62,7 @@ class CPerm:
     def trycheck(self, userperms, context):
         try:
             ret = self.check(userperms, context)
-        except PermError, e:
+        except PermError:
             ret = 0
         return ret
 
@@ -88,7 +88,7 @@ class cpOr(CPerm):
         for sub_perm in self.sub_perms:
             try:
                 if sub_perm.check(userperms, context): return 1
-            except PermError, e:
+            except PermError:
                 pass
         return 0
 
@@ -203,7 +203,7 @@ class cpTargetChannel(cpString):
         if target == 'NONE': return 1
         uperm = userperms[best_match]
         try: checklist = uperm.misc[0]
-        except IndexError, e: checklist = uperm.channels
+        except IndexError: checklist = uperm.channels
         return self.check_globlist(checklist, target)
 
     def format(self, depth=0):

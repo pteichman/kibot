@@ -20,7 +20,7 @@ class BaseModule:
         if self._stash_attrs: self._unstash()
 
         try: self._settings = init_settings(self, self._settings)
-        except AttributeError, e: pass
+        except AttributeError: pass
 
         self._set_handlers()
 
@@ -54,7 +54,7 @@ class BaseModule:
             self._stasher = self._get_stasher(autosync=0)
         for attr in self._stash_attrs:
             try: value = getattr(self, attr)
-            except AttributeError, e:
+            except AttributeError:
                 if not default == NoDefault:
                     self._stasher[attr] = default
             else: self._stasher[attr] = value
@@ -72,7 +72,7 @@ class BaseModule:
         for attr in self._stash_attrs:
             if default == NoDefault:
                 try: value = self._stasher[attr]
-                except KeyError, e: pass
+                except KeyError: pass
                 else: setattr(self, attr, value)
             else:
                 value = self._stasher.get(attr, default)
