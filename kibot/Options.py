@@ -87,7 +87,7 @@ def munge_options(f):
     f.admin.lockfile      = join(bdir, f.admin.lockfile)
     try:
         port = int(f.admin.dc_addr)
-    except ValueError, e:
+    except ValueError:
         f.admin.dc_addr   = join(bdir, f.admin.dc_addr)
     else:
         f.admin.dc_addr = port
@@ -97,7 +97,7 @@ def munge_options(f):
         f.admin.umask = int(orig, 8)
         if f.admin.umask < 0 or f.admin.umask > 0777:
             raise ValueError
-    except ValueError, e:
+    except ValueError:
         sys.exit('invalid umask: %s' % orig)
 
     tmp = []
