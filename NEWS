@@ -1,3 +1,70 @@
+0.0.13
+======
+
+For its first release since 2003, kibot has undergone a few
+changes. This should be considered a transitional release. The
+documentation has not been updated, and some commands have been
+removed with no replacements.
+
+Bug fixes and new features:
+
+* Fix a problem where all users created in the same kibot session
+  would share a reference to the same permissions list.
+
+* Fix a number of bad variable references.
+
+* Channel keys are now stored across kibot sessions, which fixes
+  joining password protected channels on start.
+
+* Fix a number of variables named the same as Python builtins, along
+  with other issues found by pylint.
+
+Modern Python support:
+
+Many changes have happened in Python since 2003. kibot now uses a new
+build system and relies on some new things in the standard library.
+
+* Use setuptools for kibot configuration/installation.
+
+* Use setuptools entrypoints for module registration. This allows you
+  to extend kibot in a more easily packaged way.
+
+* Remove usage of deprecated modules (sha, string)
+
+* Access all modules in the kibot package with PEP328 style relative
+  imports
+
+* Replace the "timeoutsocket" module with Python 2.3's built-in socket
+  timeouts
+
+* Updated python-irclib to 0.4.8.
+
+Module pruning:
+
+* Some of kibot's modules are showing their age, and I've stripped
+  things down to a smaller core list. The older modules can be easily
+  recreated and packaged with the new kibot.modules entrypoint in
+  setuptools.
+
+  Removed:
+
+    * acro
+    * bugzilla
+    * google
+    * magic
+    * slashdot
+    * units
+    * whereis
+
+  Remaining:
+
+    * auth (irc user permissions and ops management)
+    * base (bot life cycle management)
+    * irc (irc commands)
+    * log (channel logging)
+    * messaging (store-and-forward message system for offline users)
+    * rand (quotes database)
+
 0.0.12
   * Separation of the 'op' perm into 'op' and 'autoop'.  'op' now ONLY
     allows you to execute the 'op' command.  As you might have guessed,
