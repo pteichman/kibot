@@ -4,46 +4,11 @@ see the manpages, documents in doc, and the "online" help.
 
 INSTALLING FROM SOURCE
 
-  To install kibot directly from source, run the following commands:
+  To install kibot directly from source, run the following command:
 
-  ./configure
-  make
-  make install
+  $ ./setup.py install
 
-  If your default version of python is not recent enough (pre 2.2)
-  then you will need to specify your python binary on the configure
-  command line, like so:
-
-  ./configure --with-python=/usr/local/bin/python2.2
-
-  You may also find the --prefix option helpful if you want to install
-  in a non-standard location, such as a home directory or /usr/local.
-  By default, it will install under /usr.
-
-  By default, configure will put the main kibot python modules in its
-  "best-guess" position within your prefix.  If you want to force them
-  to be placed inside the standard library location, use the configure
-  option --with-python-dirs.  Note, if you do not use
-  --with-python-dirs, you will likely need to add the install
-  directory to your python search path via the PYTHONPATH environment
-  variable.
-
-BUILDING PACKAGES
-
-  It is generally recommened (for reasons completely unrelated to
-  kibot) that you install from some sort of package, such as an rpm or
-  deb.  You should be able to build an rpm directly from a downloaded
-  tarball by running:
-
-  rpm -ta kibot-VERSION.tar.gz
-
-    or
-
-  rpmbuild -ta kibot-VERSION.tar.gz
-
-  depending on your version of rpm.
-
-  [ you may find it handy to put something like
-    %_topdir /home/YOURHOMEDIR/rpm
-    in your ~/.rpmmacros file ]
-
+  You may find the --prefix option helpful if you want to install in a
+  non-standard location, such as a home directory.  By default, it
+  will install under /usr/local. See the python setuptools
+  documentation for more information.
